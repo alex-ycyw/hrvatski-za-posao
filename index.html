@@ -2997,6 +2997,7 @@ function syncToCloud() {
 function syncFromCloud(callback) {
   const pin = getPin();
   if (!firebaseReady || !pin || !firebaseDb) {
+    updateSyncIndicator(pin ? 'ready' : 'offline');
     if (callback) callback();
     return;
   }
