@@ -927,6 +927,99 @@ header h1 { font-size: 20px; font-weight: 700; }
   box-shadow: var(--shadow);
 }
 
+/* Typing mode */
+.typing-container { padding: 20px; }
+.typing-prompt {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.typing-prompt-label {
+  font-size: 12px;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.typing-prompt-text {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.typing-input-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.typing-input {
+  flex: 1;
+  padding: 14px 16px;
+  border: 2px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 500;
+  box-shadow: var(--shadow);
+  outline: none;
+  transition: border-color 0.2s;
+}
+.light .typing-input { border-color: #e0d8d0; }
+.typing-input:focus { border-color: var(--accent); }
+.typing-input.correct { border-color: var(--success); background: rgba(94,189,148,0.1); }
+.typing-input.wrong { border-color: var(--error); background: rgba(192,97,58,0.1); }
+.typing-check-btn {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 12px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+.typing-check-btn:active { transform: scale(0.96); }
+.typing-check-btn:disabled { opacity: 0.4; pointer-events: none; }
+.typing-result {
+  text-align: center;
+  padding: 12px;
+  font-size: 17px;
+  font-weight: 600;
+  min-height: 44px;
+}
+.typing-result.correct { color: var(--success); }
+.typing-result.wrong { color: var(--error); }
+.typing-correct-answer {
+  text-align: center;
+  padding: 0 20px 8px;
+  color: var(--text2);
+  font-size: 15px;
+}
+
+/* Streak banner */
+.streak-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--accent);
+}
+.streak-banner .streak-flame { font-size: 22px; }
+.streak-banner .streak-count { font-size: 20px; font-weight: 800; }
+
+/* Weak words card */
+.home-card.weak-words { border-color: var(--error); background: rgba(192,97,58,0.08); }
+.light .home-card.weak-words { background: rgba(192,97,58,0.06); }
+.home-card.weak-words.clear { opacity: 0.5; pointer-events: none; border-color: var(--success); background: rgba(94,189,148,0.06); }
+
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .card-nav, .quiz-options, .match-grid, .builder-tiles { padding-bottom: env(safe-area-inset-bottom); }
 }
@@ -1080,6 +1173,24 @@ header h1 { font-size: 20px; font-weight: 700; }
     <div class="score-item"><div class="score-num red" id="num-wrong">0</div><div class="score-label">Wrong</div></div>
   </div>
   <div class="quiz-container" id="num-content"></div>
+</div>
+
+<!-- TYPING SCREEN -->
+<div class="screen" id="typing-screen">
+  <div class="screen-back">
+    <button class="back-btn" onclick="goBack()">&#8592; Back</button>
+    <div>
+      <div class="sb-title" id="tp-screen-title">Type</div>
+      <div class="sb-detail" id="tp-screen-detail"></div>
+    </div>
+  </div>
+  <div class="quiz-score">
+    <div class="score-item"><div class="score-num green" id="tp-correct">0</div><div class="score-label">Correct</div></div>
+    <div class="score-item"><div class="score-num" id="tp-total">0</div><div class="score-label">Total</div></div>
+    <div class="score-item"><div class="score-num red" id="tp-wrong">0</div><div class="score-label">Wrong</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="tp-progress"></div></div>
+  <div class="typing-container" id="typing-content"></div>
 </div>
 
 <!-- BUILDER SCREEN -->
@@ -1621,6 +1732,7 @@ let state = {
   qzAnswered: false,
   qzQueue: [],
   qzMissed: [],
+  qzCustomQueue: null,
   theme: localStorage.getItem('hr-theme') || 'dark'
 };
 
@@ -1697,7 +1809,28 @@ function saveMastery(hrText, correct) {
   if (correct) { m[hrText].streak = (m[hrText].streak || 0) + 1; }
   else { m[hrText].streak = 0; }
   localStorage.setItem('hr-mastery', JSON.stringify(m));
+  updateStreak();
   if (typeof syncToCloud === 'function') syncToCloud();
+}
+
+function getStreak() {
+  try { return JSON.parse(localStorage.getItem('hr-streak') || '{"current":0,"lastDate":""}'); }
+  catch(e) { return { current: 0, lastDate: '' }; }
+}
+
+function updateStreak() {
+  const s = getStreak();
+  const today = new Date().toISOString().slice(0, 10);
+  if (s.lastDate === today) return; // already counted today
+
+  const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
+  if (s.lastDate === yesterday) {
+    s.current++;
+  } else {
+    s.current = 1;
+  }
+  s.lastDate = today;
+  localStorage.setItem('hr-streak', JSON.stringify(s));
 }
 
 function getCatProgress(cat, level) {
@@ -1751,6 +1884,16 @@ function renderHome() {
   const grid = $('home-grid');
   let html = '';
 
+  // Streak banner
+  const streak = getStreak();
+  if (streak.current > 0) {
+    html += `<div class="streak-banner full-width" style="grid-column:1/-1">
+      <span class="streak-flame">&#128293;</span>
+      <span class="streak-count">${streak.current}</span>
+      <span>day${streak.current !== 1 ? 's' : ''} streak</span>
+    </div>`;
+  }
+
   // "All Categories" card — full width
   const allProg = getCatProgress('All');
   html += `<div class="home-card full-width" data-cat="All">
@@ -1759,6 +1902,27 @@ function renderHome() {
     <div class="hc-progress"><strong>${allProg.known}</strong> / ${allProg.total} learned</div>
     <div class="hc-bar"><div class="hc-bar-fill" style="width:${allProg.pct}%"></div></div>
   </div>`;
+
+  // Weak words card
+  const m = getMastery();
+  const weakWords = WORDS.filter(w => {
+    const streak = (m[w.hr] && m[w.hr].streak) || 0;
+    return streak <= 1 && m[w.hr] !== undefined;
+  });
+  const weakCount = weakWords.length;
+  if (weakCount > 0) {
+    html += `<div class="home-card weak-words full-width" data-special="weak">
+      <div class="hc-icon">&#128165;</div>
+      <div class="hc-name">Weak Words</div>
+      <div class="hc-progress">${weakCount} word${weakCount !== 1 ? 's' : ''} to review</div>
+    </div>`;
+  } else if (Object.keys(m).length > 0) {
+    html += `<div class="home-card weak-words clear full-width">
+      <div class="hc-icon">&#10003;</div>
+      <div class="hc-name">Weak Words</div>
+      <div class="hc-progress">All clear!</div>
+    </div>`;
+  }
 
   // Individual category cards
   CATEGORIES.forEach(cat => {
@@ -1803,25 +1967,29 @@ function renderHome() {
       } else if (mode === 'dialogue') {
         initDialogue();
         showScreen('dialogue-screen');
+      } else if (mode === 'weak') {
+        startWeakWordsQuiz();
       }
     });
   });
 }
 
 function renderActivities() {
-  // Title
-  $('act-cat-title').textContent = state.currentCat === 'All' ? 'All Categories' : (CAT_ICONS[state.currentCat] || '') + ' ' + state.currentCat;
+  // Title — use innerHTML so HTML entities in CAT_ICONS render properly
+  const catLabel = state.currentCat === 'All' ? 'All Categories' : state.currentCat;
+  const catIcon = state.currentCat !== 'All' ? (CAT_ICONS[state.currentCat] || '') + ' ' : '';
+  $('act-cat-title').innerHTML = catIcon + catLabel;
 
-  // Level filter with counts
+  // Level filter with learned/total counts
   const levelsContainer = $('act-levels');
   levelsContainer.innerHTML = '';
   const levels = ['All', 'word', 'phrase', 'sentence'];
   levels.forEach(lvl => {
-    const count = getFiltered(state.currentCat, lvl === 'All' ? undefined : lvl).length;
+    const prog = getCatProgress(state.currentCat, lvl === 'All' ? undefined : lvl);
     const btn = document.createElement('button');
     btn.className = 'dir-btn' + (state.currentLevel === lvl ? ' active' : '');
     const label = lvl === 'All' ? 'All' : (LEVEL_LABELS[lvl] || lvl);
-    btn.textContent = label + ' (' + count + ')';
+    btn.textContent = label + ' (' + prog.known + '/' + prog.total + ')';
     btn.addEventListener('click', () => {
       state.currentLevel = lvl;
       renderActivities();
@@ -1847,6 +2015,11 @@ function renderActivities() {
       <div class="ab-label">Match</div>
       <div class="ab-desc">Pair matching</div>
     </div>
+    <div class="activity-btn${!currentLevelItems ? ' disabled' : ''}" data-mode="typing">
+      <div class="ab-icon">&#9000;</div>
+      <div class="ab-label">Type</div>
+      <div class="ab-desc">Type the answer</div>
+    </div>
     <div class="activity-btn${!hasSentences ? ' disabled' : ''}" data-mode="builder">
       <div class="ab-icon">&#128295;</div>
       <div class="ab-label">Build</div>
@@ -1864,28 +2037,39 @@ function renderActivities() {
   });
 }
 
+function getActivityDetail() {
+  const lvlLabel = state.currentLevel === 'All' ? 'All levels' : (LEVEL_LABELS[state.currentLevel] || state.currentLevel);
+  const prog = getCatProgress(state.currentCat, state.currentLevel === 'All' ? undefined : state.currentLevel);
+  return lvlLabel + ' \u00B7 ' + prog.known + '/' + prog.total + ' learned';
+}
+
 function startActivity(mode) {
   const catLabel = state.currentCat === 'All' ? 'All Categories' : state.currentCat;
-  const lvlLabel = state.currentLevel === 'All' ? 'All levels' : (LEVEL_LABELS[state.currentLevel] || state.currentLevel);
+  const detail = getActivityDetail();
 
   if (mode === 'quiz') {
-    $('qz-screen-title').textContent = 'Quiz — ' + catLabel;
-    $('qz-screen-detail').textContent = lvlLabel;
+    $('qz-screen-title').textContent = 'Quiz \u2014 ' + catLabel;
+    $('qz-screen-detail').textContent = detail;
     initQuiz();
     showScreen('quiz-screen');
   } else if (mode === 'match') {
-    $('mt-screen-title').textContent = 'Match — ' + catLabel;
-    $('mt-screen-detail').textContent = lvlLabel;
+    $('mt-screen-title').textContent = 'Match \u2014 ' + catLabel;
+    $('mt-screen-detail').textContent = detail;
     initMatch();
     showScreen('match-screen');
   } else if (mode === 'builder') {
-    $('bl-screen-title').textContent = 'Build — ' + catLabel;
-    $('bl-screen-detail').textContent = lvlLabel;
+    $('bl-screen-title').textContent = 'Build \u2014 ' + catLabel;
+    $('bl-screen-detail').textContent = detail;
     initBuilder();
     showScreen('builder-screen');
+  } else if (mode === 'typing') {
+    $('tp-screen-title').textContent = 'Type \u2014 ' + catLabel;
+    $('tp-screen-detail').textContent = detail;
+    initTyping();
+    showScreen('typing-screen');
   } else if (mode === 'flashcards') {
-    $('fc-screen-title').textContent = 'Cards — ' + catLabel;
-    $('fc-screen-detail').textContent = lvlLabel;
+    $('fc-screen-title').textContent = 'Cards \u2014 ' + catLabel;
+    $('fc-screen-detail').textContent = detail;
     initFlashcards();
     showScreen('flashcards-screen');
   }
@@ -1893,7 +2077,7 @@ function startActivity(mode) {
 
 function goBack() {
   const screen = state.currentScreen;
-  if (['quiz', 'match', 'builder', 'flashcards'].includes(screen)) {
+  if (['quiz', 'match', 'builder', 'flashcards', 'typing'].includes(screen)) {
     // Back to activity picker
     renderActivities();
     showScreen('activity-screen');
@@ -1909,6 +2093,24 @@ function goBack() {
     renderHome();
     showScreen('home-screen');
   }
+}
+
+function startWeakWordsQuiz() {
+  const m = getMastery();
+  const weak = WORDS.filter(w => {
+    const streak = (m[w.hr] && m[w.hr].streak) || 0;
+    return streak <= 1 && m[w.hr] !== undefined;
+  });
+  if (!weak.length) return;
+
+  state.currentCat = 'All';
+  state.currentLevel = 'All';
+  state.qzCustomQueue = shuffle(weak.slice());
+
+  $('qz-screen-title').textContent = 'Quiz — Weak Words';
+  $('qz-screen-detail').textContent = weak.length + ' words to review';
+  initQuiz();
+  showScreen('quiz-screen');
 }
 
 // Wire the activity screen back button
@@ -2041,6 +2243,11 @@ document.addEventListener('keydown', e => {
 // QUIZ
 // ============================================================
 function buildQueue() {
+  if (state.qzCustomQueue && state.qzCustomQueue.length) {
+    state.qzQueue = state.qzCustomQueue;
+    state.qzCustomQueue = null;
+    return;
+  }
   const filtered = getFiltered(state.currentCat, state.currentLevel === 'All' ? undefined : state.currentLevel);
   const m = getMastery();
   // Spaced repetition: sort into tiers by mastery streak
@@ -2450,6 +2657,135 @@ function renderNumDrill() {
 function initNumbers() {
   renderNumTiers();
   renderNumDrill();
+}
+
+// ============================================================
+// TYPING MODE
+// ============================================================
+let tpState = {
+  queue: [],
+  correct: 0,
+  wrong: 0,
+  total: 0,
+  answered: false
+};
+
+function buildTypingQueue() {
+  const filtered = getFiltered(state.currentCat, state.currentLevel === 'All' ? undefined : state.currentLevel);
+  const m = getMastery();
+  const weakest = [], learning = [], known = [];
+  filtered.forEach(w => {
+    const streak = (m[w.hr] && m[w.hr].streak) || 0;
+    if (streak === 0) weakest.push(w);
+    else if (streak < 3) learning.push(w);
+    else known.push(w);
+  });
+  tpState.queue = [...shuffle(weakest), ...shuffle(learning), ...shuffle(known)];
+}
+
+function normalizeAnswer(str) {
+  return str.trim().toLowerCase().replace(/[?.!,;:]+$/g, '');
+}
+
+function renderTyping() {
+  const container = $('typing-content');
+  if (!tpState.queue.length) buildTypingQueue();
+  if (!tpState.queue.length) {
+    container.innerHTML = '<p style="text-align:center;color:var(--text2);padding:40px;">No cards for this filter.</p>';
+    return;
+  }
+
+  const card = tpState.queue[0];
+  tpState.answered = false;
+
+  container.innerHTML = `
+    <div class="typing-prompt">
+      <div class="typing-prompt-label">Type in Croatian &middot; ${LEVEL_LABELS[card.lvl] || ''}</div>
+      <div class="typing-prompt-text">${card.en}</div>
+    </div>
+    <div class="typing-input-row">
+      <input type="text" class="typing-input" id="tp-input" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type Croatian...">
+      <button class="typing-check-btn" id="tp-check">Check</button>
+    </div>
+    <div class="typing-result" id="tp-result"></div>
+    <div class="typing-correct-answer" id="tp-answer"></div>
+  `;
+
+  const input = $('tp-input');
+  const checkBtn = $('tp-check');
+
+  function checkAnswer() {
+    if (tpState.answered) return;
+    const userAnswer = normalizeAnswer(input.value);
+    if (!userAnswer) return;
+
+    tpState.answered = true;
+    tpState.total++;
+    checkBtn.disabled = true;
+
+    const correctAnswer = normalizeAnswer(card.hr);
+    const isCorrect = userAnswer === correctAnswer;
+
+    if (isCorrect) {
+      input.classList.add('correct');
+      $('tp-result').textContent = 'Correct!';
+      $('tp-result').className = 'typing-result correct';
+      tpState.correct++;
+    } else {
+      input.classList.add('wrong');
+      $('tp-result').textContent = 'Not quite...';
+      $('tp-result').className = 'typing-result wrong';
+      $('tp-answer').textContent = card.hr;
+      tpState.wrong++;
+    }
+
+    saveMastery(card.hr, isCorrect);
+    updateMasteryBar();
+
+    $('tp-correct').textContent = tpState.correct;
+    $('tp-wrong').textContent = tpState.wrong;
+    $('tp-total').textContent = tpState.total;
+
+    const total = getFiltered(state.currentCat, state.currentLevel === 'All' ? undefined : state.currentLevel).length;
+    $('tp-progress').style.width = Math.round((tpState.total / total) * 100) + '%';
+
+    const utterance = speak(card.hr);
+
+    let timerDone = false;
+    let speechDone = !utterance;
+    function tryAdvance() {
+      if (timerDone && speechDone) {
+        tpState.queue.shift();
+        if (!tpState.queue.length) buildTypingQueue();
+        renderTyping();
+      }
+    }
+    setTimeout(() => { timerDone = true; tryAdvance(); }, 2000);
+    if (utterance) {
+      utterance.onend = () => { speechDone = true; tryAdvance(); };
+      utterance.onerror = () => { speechDone = true; tryAdvance(); };
+    }
+  }
+
+  checkBtn.addEventListener('click', checkAnswer);
+  input.addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkAnswer();
+  });
+
+  setTimeout(() => input.focus(), 100);
+}
+
+function initTyping() {
+  tpState.correct = 0;
+  tpState.wrong = 0;
+  tpState.total = 0;
+  tpState.queue = [];
+  $('tp-correct').textContent = '0';
+  $('tp-wrong').textContent = '0';
+  $('tp-total').textContent = '0';
+  $('tp-progress').style.width = '0%';
+  buildTypingQueue();
+  renderTyping();
 }
 
 // ============================================================
@@ -2999,9 +3335,11 @@ function syncToCloud() {
   syncDebounceTimer = setTimeout(() => {
     updateSyncIndicator('syncing');
     const mastery = getMastery();
+    const streak = getStreak();
     firebaseDb.ref('users/' + pin + '/mastery').set(mastery)
       .then(() => {
         firebaseDb.ref('users/' + pin + '/lastSync').set(Date.now());
+        firebaseDb.ref('users/' + pin + '/streak').set(streak);
         updateSyncIndicator('synced');
       })
       .catch(e => {
