@@ -8,6 +8,8 @@
 <meta name="theme-color" content="#0c1b33">
 <title>Hrvatski za Posao</title>
 <link rel="manifest" href="manifest.json">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230c1b33' width='100' height='100' rx='20'/><text y='68' x='50' text-anchor='middle' font-size='55'>🇭🇷</text></svg>">
 <style>
 :root {
@@ -99,26 +101,159 @@ header h1 { font-size: 20px; font-weight: 700; }
 }
 .icon-btn:hover, .icon-btn:active { color: var(--accent); background: rgba(255,255,255,0.05); }
 
-.tabs {
-  display: flex;
-  background: var(--bg2);
-  padding: 0 16px 12px;
-  gap: 8px;
+/* Home screen grid */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 16px 20px;
 }
-.tab {
-  flex: 1;
-  padding: 10px;
-  border: none;
-  border-radius: 10px;
-  font-size: 15px;
-  font-weight: 600;
+.home-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 18px 16px;
   cursor: pointer;
   transition: all 0.2s;
-  background: rgba(255,255,255,0.05);
-  color: var(--text2);
+  box-shadow: var(--shadow);
+  text-align: center;
+  border: 1.5px solid transparent;
 }
-.light .tab { background: #f0ebe4; }
-.tab.active { background: var(--accent); color: #fff; }
+.home-card:active { transform: scale(0.97); }
+.home-card .hc-icon { font-size: 28px; margin-bottom: 6px; }
+.home-card .hc-name { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+.home-card .hc-progress { font-size: 12px; color: var(--text2); }
+.home-card .hc-progress strong { color: var(--success); }
+.home-card .hc-bar { height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+.light .home-card .hc-bar { background: #e5ddd5; }
+.home-card .hc-bar-fill { height: 100%; background: var(--success); border-radius: 2px; transition: width 0.3s; }
+.home-card.special { border-color: var(--accent); background: rgba(192,97,58,0.08); }
+.light .home-card.special { background: rgba(192,97,58,0.06); }
+.home-card.full-width { grid-column: 1 / -1; }
+
+/* Activity picker screen */
+.activity-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  padding: 12px 20px 20px;
+}
+.activity-btn {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+  text-align: center;
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.activity-btn:active { transform: scale(0.97); }
+.activity-btn .ab-icon { font-size: 32px; }
+.activity-btn .ab-label { font-size: 16px; font-weight: 700; }
+.activity-btn .ab-desc { font-size: 12px; color: var(--text2); }
+.activity-btn.disabled { opacity: 0.35; pointer-events: none; }
+
+/* Screen back header */
+.screen-back {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  background: var(--bg2);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.light .screen-back { border-bottom: 1px solid rgba(160,100,60,0.08); }
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+.back-btn:active { opacity: 0.7; }
+.screen-back .sb-title { font-size: 16px; font-weight: 700; }
+.screen-back .sb-detail { font-size: 12px; color: var(--text2); }
+
+/* Activity screen level filter */
+.act-level-filter {
+  display: flex;
+  gap: 8px;
+  padding: 12px 20px 4px;
+}
+
+/* Sync indicator */
+.sync-indicator {
+  font-size: 12px;
+  color: var(--text2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+.sync-indicator.synced { color: var(--success); }
+.sync-indicator.syncing { color: var(--accent); }
+
+/* PIN modal */
+.pin-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.pin-modal {
+  background: var(--bg2);
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  text-align: center;
+  max-width: 320px;
+  width: 90%;
+  box-shadow: var(--shadow);
+}
+.pin-modal h3 { margin-bottom: 12px; }
+.pin-modal p { font-size: 14px; color: var(--text2); margin-bottom: 16px; }
+.pin-modal input {
+  width: 120px;
+  padding: 12px;
+  font-size: 24px;
+  text-align: center;
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text);
+  letter-spacing: 8px;
+  font-weight: 700;
+}
+.light .pin-modal input { border-color: #ddd5cc; }
+.pin-modal button {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.pin-modal .pin-skip {
+  background: transparent;
+  color: var(--text2);
+  font-size: 13px;
+  margin-top: 8px;
+}
 
 .categories {
   display: flex;
@@ -802,19 +937,11 @@ header h1 { font-size: 20px; font-weight: 700; }
 <header>
   <h1><svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:6px;"><path d="M12 3c-2 4-6 6-9 7 3 0 6 1 8 3-1-3 0-7 1-10z" fill="#6b8f5e" opacity="0.8"/><path d="M12 3c2 4 6 6 9 7-3 0-6 1-8 3 1-3 0-7-1-10z" fill="#6b8f5e" opacity="0.6"/><ellipse cx="7" cy="8" rx="2.5" ry="1.3" transform="rotate(-30 7 8)" fill="#6b8f5e" opacity="0.5"/><ellipse cx="17" cy="8" rx="2.5" ry="1.3" transform="rotate(30 17 8)" fill="#6b8f5e" opacity="0.4"/><circle cx="12" cy="16" r="1.5" fill="#8b6f4e" opacity="0.6"/><path d="M12 13v8" stroke="#6b8f5e" stroke-width="1.5" opacity="0.5"/></svg>Hrvatski za Posao</h1>
   <div class="header-btns">
+    <span id="syncIndicator" class="sync-indicator" title="Cloud sync"></span>
     <span id="voiceIndicator" style="font-size:11px;color:var(--text2);align-self:center;opacity:0.7"></span>
     <button class="icon-btn" id="themeBtn" aria-label="Toggle theme">&#9788;</button>
   </div>
 </header>
-
-<div class="tabs">
-  <button class="tab active" data-tab="quiz">Quiz</button>
-  <button class="tab" data-tab="match">Match</button>
-  <button class="tab" data-tab="numbers">123</button>
-  <button class="tab" data-tab="builder">Build</button>
-  <button class="tab" data-tab="dialogue">Talk</button>
-  <button class="tab" data-tab="flashcards">Cards</button>
-</div>
 
 <div class="mastery-bar" id="mastery-bar">
   <div style="flex:1;min-width:0">
@@ -827,15 +954,41 @@ header h1 { font-size: 20px; font-weight: 700; }
   </div>
 </div>
 
+<!-- HOME SCREEN -->
+<div class="screen active" id="home-screen">
+  <div class="home-grid" id="home-grid"></div>
+</div>
+
+<!-- ACTIVITY PICKER SCREEN -->
+<div class="screen" id="activity-screen">
+  <div class="screen-back" id="act-back-bar">
+    <button class="back-btn" id="act-back-btn">&#8592; Back</button>
+    <div>
+      <div class="sb-title" id="act-cat-title">All Categories</div>
+    </div>
+  </div>
+  <div class="act-level-filter" id="act-levels"></div>
+  <div class="activity-grid" id="activity-grid"></div>
+</div>
+
 <!-- DIALOGUE SCREEN -->
 <div class="screen" id="dialogue-screen">
+  <div class="screen-back">
+    <button class="back-btn" onclick="goBack()">&#8592; Back</button>
+    <div><div class="sb-title">Talk (Dialogues)</div></div>
+  </div>
   <div id="dlg-content"></div>
 </div>
 
 <!-- FLASHCARD SCREEN -->
 <div class="screen" id="flashcards-screen">
-  <div class="categories" id="fc-categories"></div>
-  <div class="level-filter" id="fc-levels"></div>
+  <div class="screen-back">
+    <button class="back-btn" onclick="goBack()">&#8592; Back</button>
+    <div>
+      <div class="sb-title" id="fc-screen-title">Cards</div>
+      <div class="sb-detail" id="fc-screen-detail"></div>
+    </div>
+  </div>
   <div class="quiz-direction" id="fc-direction">
     <button class="dir-btn active" data-dir="en-hr">EN &#8594; HR</button>
     <button class="dir-btn" data-dir="hr-en">HR &#8594; EN</button>
@@ -871,9 +1024,14 @@ header h1 { font-size: 20px; font-weight: 700; }
 </div>
 
 <!-- QUIZ SCREEN -->
-<div class="screen active" id="quiz-screen">
-  <div class="categories" id="qz-categories"></div>
-  <div class="level-filter" id="qz-levels"></div>
+<div class="screen" id="quiz-screen">
+  <div class="screen-back">
+    <button class="back-btn" onclick="goBack()">&#8592; Back</button>
+    <div>
+      <div class="sb-title" id="qz-screen-title">Quiz</div>
+      <div class="sb-detail" id="qz-screen-detail"></div>
+    </div>
+  </div>
   <div class="quiz-direction" id="qz-direction">
     <button class="dir-btn active" data-dir="en-hr">EN &#8594; HR</button>
     <button class="dir-btn" data-dir="hr-en">HR &#8594; EN</button>
@@ -891,8 +1049,13 @@ header h1 { font-size: 20px; font-weight: 700; }
 
 <!-- MATCH SCREEN -->
 <div class="screen" id="match-screen">
-  <div class="categories" id="mt-categories"></div>
-  <div class="level-filter" id="mt-levels"></div>
+  <div class="screen-back">
+    <button class="back-btn" onclick="goBack()">&#8592; Back</button>
+    <div>
+      <div class="sb-title" id="mt-screen-title">Match</div>
+      <div class="sb-detail" id="mt-screen-detail"></div>
+    </div>
+  </div>
   <div class="match-score">
     <div class="score-item"><div class="score-num green" id="mt-matched">0</div><div class="score-label">Matched</div></div>
     <div class="score-item"><div class="score-num red" id="mt-mistakes">0</div><div class="score-label">Mistakes</div></div>
@@ -906,6 +1069,10 @@ header h1 { font-size: 20px; font-weight: 700; }
 
 <!-- NUMBERS SCREEN -->
 <div class="screen" id="numbers-screen">
+  <div class="screen-back">
+    <button class="back-btn" onclick="goBack()">&#8592; Back</button>
+    <div><div class="sb-title">Numbers (123)</div></div>
+  </div>
   <div class="num-tier-row" id="num-tiers"></div>
   <div class="quiz-score">
     <div class="score-item"><div class="score-num green" id="num-correct">0</div><div class="score-label">Correct</div></div>
@@ -917,7 +1084,13 @@ header h1 { font-size: 20px; font-weight: 700; }
 
 <!-- BUILDER SCREEN -->
 <div class="screen" id="builder-screen">
-  <div class="categories" id="bl-categories"></div>
+  <div class="screen-back">
+    <button class="back-btn" onclick="goBack()">&#8592; Back</button>
+    <div>
+      <div class="sb-title" id="bl-screen-title">Build</div>
+      <div class="sb-detail" id="bl-screen-detail"></div>
+    </div>
+  </div>
   <div class="builder-score">
     <div class="score-item"><div class="score-num green" id="bl-correct">0</div><div class="score-label">Correct</div></div>
     <div class="score-item"><div class="score-num" id="bl-total">0</div><div class="score-label">Total</div></div>
@@ -1417,15 +1590,13 @@ const LEVEL_LABELS = { word: "Word", phrase: "Phrase", sentence: "Full sentence"
 // STATE
 // ============================================================
 let state = {
-  mode: 'quiz',
-  fcCategory: 'All',
-  fcLevel: 'All',
+  currentScreen: 'home',
+  currentCat: 'All',
+  currentLevel: 'All',
   fcDirection: 'en-hr',
   fcIndex: 0,
   fcFlipped: false,
   fcSeen: new Set(),
-  qzCategory: 'All',
-  qzLevel: 'All',
   qzDirection: 'en-hr',
   qzCorrect: 0,
   qzWrong: 0,
@@ -1433,7 +1604,6 @@ let state = {
   qzAnswered: false,
   qzQueue: [],
   qzMissed: [],
-  mtLevel: 'All',
   theme: localStorage.getItem('hr-theme') || 'dark'
 };
 
@@ -1510,6 +1680,7 @@ function saveMastery(hrText, correct) {
   if (correct) { m[hrText].streak = (m[hrText].streak || 0) + 1; }
   else { m[hrText].streak = 0; }
   localStorage.setItem('hr-mastery', JSON.stringify(m));
+  if (typeof syncToCloud === 'function') syncToCloud();
 }
 
 function getCatProgress(cat, level) {
@@ -1535,22 +1706,6 @@ function updateMasteryBar() {
 }
 
 // ============================================================
-// LEVEL FILTER RENDERING
-// ============================================================
-function renderLevels(containerId, currentLevel, onSelect) {
-  const container = $(containerId);
-  if (!container) return;
-  container.innerHTML = '';
-  ['All', 'word', 'phrase', 'sentence'].forEach(lvl => {
-    const btn = document.createElement('button');
-    btn.className = 'dir-btn' + (currentLevel === lvl ? ' active' : '');
-    btn.textContent = lvl === 'All' ? 'All' : (LEVEL_LABELS[lvl] || lvl);
-    btn.addEventListener('click', () => onSelect(lvl));
-    container.appendChild(btn);
-  });
-}
-
-// ============================================================
 // THEME
 // ============================================================
 function applyTheme() {
@@ -1566,49 +1721,189 @@ $('themeBtn').addEventListener('click', () => {
 applyTheme();
 
 // ============================================================
-// TABS
+// NAVIGATION
 // ============================================================
-document.querySelectorAll('.tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-    state.mode = tab.dataset.tab;
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    $(state.mode + '-screen').classList.add('active');
-  });
-});
-
-// ============================================================
-// CATEGORY BUTTONS
-// ============================================================
-function fmtProgress(prog) {
-  return prog.known + '/' + prog.total;
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = $(id);
+  if (el) el.classList.add('active');
+  state.currentScreen = id.replace('-screen', '');
 }
 
-function renderCategories(containerId, currentCat, onSelect, level) {
-  const container = $(containerId);
-  container.innerHTML = '';
-  const allProg = getCatProgress('All', level);
-  const allBtn = document.createElement('button');
-  allBtn.className = 'cat-btn' + (currentCat === 'All' ? ' active' : '');
-  allBtn.innerHTML = 'All <span class="cat-pct' + (allProg.pct >= 80 ? ' green' : '') + '">' + fmtProgress(allProg) + '</span>';
-  allBtn.addEventListener('click', () => onSelect('All'));
-  container.appendChild(allBtn);
+function renderHome() {
+  const grid = $('home-grid');
+  let html = '';
+
+  // "All Categories" card — full width
+  const allProg = getCatProgress('All');
+  html += `<div class="home-card full-width" data-cat="All">
+    <div class="hc-icon">&#127891;</div>
+    <div class="hc-name">All Categories</div>
+    <div class="hc-progress"><strong>${allProg.known}</strong> / ${allProg.total} learned</div>
+    <div class="hc-bar"><div class="hc-bar-fill" style="width:${allProg.pct}%"></div></div>
+  </div>`;
+
+  // Individual category cards
   CATEGORIES.forEach(cat => {
-    const prog = getCatProgress(cat, level);
-    const btn = document.createElement('button');
-    btn.className = 'cat-btn' + (currentCat === cat ? ' active' : '');
-    btn.dataset.cat = cat;
-    btn.innerHTML = (CAT_ICONS[cat] || '') + ' ' + cat + ' <span class="cat-pct' + (prog.pct >= 80 ? ' green' : '') + '">' + fmtProgress(prog) + '</span>';
-    btn.addEventListener('click', () => onSelect(cat));
-    container.appendChild(btn);
+    const prog = getCatProgress(cat);
+    html += `<div class="home-card" data-cat="${cat}">
+      <div class="hc-icon">${CAT_ICONS[cat] || ''}</div>
+      <div class="hc-name">${cat}</div>
+      <div class="hc-progress"><strong>${prog.known}</strong> / ${prog.total} learned</div>
+      <div class="hc-bar"><div class="hc-bar-fill" style="width:${prog.pct}%"></div></div>
+    </div>`;
+  });
+
+  // Special cards — Numbers + Talk
+  html += `<div class="home-card special" data-special="numbers">
+    <div class="hc-icon">&#128290;</div>
+    <div class="hc-name">Numbers (123)</div>
+    <div class="hc-progress">Croatian numbers 1-1000</div>
+  </div>`;
+  html += `<div class="home-card special" data-special="dialogue">
+    <div class="hc-icon">&#128172;</div>
+    <div class="hc-name">Talk (Dialogues)</div>
+    <div class="hc-progress">${DIALOGUES.length} scenarios</div>
+  </div>`;
+
+  grid.innerHTML = html;
+
+  // Wire up clicks
+  grid.querySelectorAll('.home-card[data-cat]').forEach(card => {
+    card.addEventListener('click', () => {
+      state.currentCat = card.dataset.cat;
+      state.currentLevel = 'All';
+      renderActivities();
+      showScreen('activity-screen');
+    });
+  });
+  grid.querySelectorAll('.home-card[data-special]').forEach(card => {
+    card.addEventListener('click', () => {
+      const mode = card.dataset.special;
+      if (mode === 'numbers') {
+        initNumbers();
+        showScreen('numbers-screen');
+      } else if (mode === 'dialogue') {
+        initDialogue();
+        showScreen('dialogue-screen');
+      }
+    });
   });
 }
+
+function renderActivities() {
+  // Title
+  $('act-cat-title').textContent = state.currentCat === 'All' ? 'All Categories' : (CAT_ICONS[state.currentCat] || '') + ' ' + state.currentCat;
+
+  // Level filter with counts
+  const levelsContainer = $('act-levels');
+  levelsContainer.innerHTML = '';
+  const levels = ['All', 'word', 'phrase', 'sentence'];
+  levels.forEach(lvl => {
+    const count = getFiltered(state.currentCat, lvl === 'All' ? undefined : lvl).length;
+    const btn = document.createElement('button');
+    btn.className = 'dir-btn' + (state.currentLevel === lvl ? ' active' : '');
+    const label = lvl === 'All' ? 'All' : (LEVEL_LABELS[lvl] || lvl);
+    btn.textContent = label + ' (' + count + ')';
+    btn.addEventListener('click', () => {
+      state.currentLevel = lvl;
+      renderActivities();
+    });
+    levelsContainer.appendChild(btn);
+  });
+
+  // Activity buttons
+  const actGrid = $('activity-grid');
+  const sentenceCount = getFiltered(state.currentCat, 'sentence').length;
+  const currentLevelItems = getFiltered(state.currentCat, state.currentLevel === 'All' ? undefined : state.currentLevel).length;
+  const hasSentences = state.currentLevel === 'sentence' ? sentenceCount > 0 :
+                       state.currentLevel === 'All' ? sentenceCount > 0 : false;
+
+  actGrid.innerHTML = `
+    <div class="activity-btn${currentLevelItems < 4 ? ' disabled' : ''}" data-mode="quiz">
+      <div class="ab-icon">&#127919;</div>
+      <div class="ab-label">Quiz</div>
+      <div class="ab-desc">Multiple choice</div>
+    </div>
+    <div class="activity-btn${currentLevelItems < 4 ? ' disabled' : ''}" data-mode="match">
+      <div class="ab-icon">&#129513;</div>
+      <div class="ab-label">Match</div>
+      <div class="ab-desc">Pair matching</div>
+    </div>
+    <div class="activity-btn${!hasSentences ? ' disabled' : ''}" data-mode="builder">
+      <div class="ab-icon">&#128295;</div>
+      <div class="ab-label">Build</div>
+      <div class="ab-desc">Sentence builder</div>
+    </div>
+    <div class="activity-btn${!currentLevelItems ? ' disabled' : ''}" data-mode="flashcards">
+      <div class="ab-icon">&#127183;</div>
+      <div class="ab-label">Cards</div>
+      <div class="ab-desc">Flashcards</div>
+    </div>
+  `;
+
+  actGrid.querySelectorAll('.activity-btn:not(.disabled)').forEach(btn => {
+    btn.addEventListener('click', () => startActivity(btn.dataset.mode));
+  });
+}
+
+function startActivity(mode) {
+  const catLabel = state.currentCat === 'All' ? 'All Categories' : state.currentCat;
+  const lvlLabel = state.currentLevel === 'All' ? 'All levels' : (LEVEL_LABELS[state.currentLevel] || state.currentLevel);
+
+  if (mode === 'quiz') {
+    $('qz-screen-title').textContent = 'Quiz — ' + catLabel;
+    $('qz-screen-detail').textContent = lvlLabel;
+    initQuiz();
+    showScreen('quiz-screen');
+  } else if (mode === 'match') {
+    $('mt-screen-title').textContent = 'Match — ' + catLabel;
+    $('mt-screen-detail').textContent = lvlLabel;
+    initMatch();
+    showScreen('match-screen');
+  } else if (mode === 'builder') {
+    $('bl-screen-title').textContent = 'Build — ' + catLabel;
+    $('bl-screen-detail').textContent = lvlLabel;
+    initBuilder();
+    showScreen('builder-screen');
+  } else if (mode === 'flashcards') {
+    $('fc-screen-title').textContent = 'Cards — ' + catLabel;
+    $('fc-screen-detail').textContent = lvlLabel;
+    initFlashcards();
+    showScreen('flashcards-screen');
+  }
+}
+
+function goBack() {
+  const screen = state.currentScreen;
+  if (['quiz', 'match', 'builder', 'flashcards'].includes(screen)) {
+    // Back to activity picker
+    renderActivities();
+    showScreen('activity-screen');
+  } else if (screen === 'activity') {
+    // Back to home
+    renderHome();
+    showScreen('home-screen');
+  } else if (screen === 'numbers' || screen === 'dialogue') {
+    // Back to home
+    renderHome();
+    showScreen('home-screen');
+  } else {
+    renderHome();
+    showScreen('home-screen');
+  }
+}
+
+// Wire the activity screen back button
+$('act-back-btn').addEventListener('click', () => {
+  renderHome();
+  showScreen('home-screen');
+});
 
 // ============================================================
 // FLASHCARDS
 // ============================================================
-function fcCards() { return getFiltered(state.fcCategory, state.fcLevel); }
+function fcCards() { return getFiltered(state.currentCat, state.currentLevel === 'All' ? undefined : state.currentLevel); }
 
 function renderFlashcard() {
   const cards = fcCards();
@@ -1659,16 +1954,7 @@ function initFlashcards() {
     state.fcSeen = new Set(saved);
   } catch(e) {}
 
-  renderCategories('fc-categories', state.fcCategory, cat => {
-    state.fcCategory = cat;
-    state.fcIndex = 0;
-    initFlashcards();
-  }, state.fcLevel);
-  renderLevels('fc-levels', state.fcLevel, lvl => {
-    state.fcLevel = lvl;
-    state.fcIndex = 0;
-    initFlashcards();
-  });
+  state.fcIndex = 0;
   // Direction toggle
   $('fc-direction').querySelectorAll('.dir-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.dir === state.fcDirection);
@@ -1727,7 +2013,7 @@ $('flashcard').addEventListener('touchend', e => {
 
 // Keyboard
 document.addEventListener('keydown', e => {
-  if (state.mode === 'flashcards') {
+  if (state.currentScreen === 'flashcards') {
     if (e.key === 'ArrowRight') $('nextBtn').click();
     if (e.key === 'ArrowLeft') $('prevBtn').click();
     if (e.key === ' ') { e.preventDefault(); $('flashcard').click(); }
@@ -1738,7 +2024,7 @@ document.addEventListener('keydown', e => {
 // QUIZ
 // ============================================================
 function buildQueue() {
-  const filtered = getFiltered(state.qzCategory, state.qzLevel);
+  const filtered = getFiltered(state.currentCat, state.currentLevel === 'All' ? undefined : state.currentLevel);
   const m = getMastery();
   // Spaced repetition: sort into tiers by mastery streak
   const weakest = [], learning = [], known = [];
@@ -1770,7 +2056,7 @@ function renderQuiz() {
   const correctAnswer = showHrOptions ? card.hr : card.en;
   const promptLabel = isListen ? 'Listen & choose' : (isEnHr ? 'English' : 'Croatian');
 
-  let pool = getFiltered(state.qzCategory, state.qzLevel).filter(w => w !== card);
+  let pool = getFiltered(state.currentCat, state.currentLevel === 'All' ? undefined : state.currentLevel).filter(w => w !== card);
   let sameLvl = pool.filter(w => w.lvl === card.lvl);
   let wrongSource = sameLvl.length >= 3 ? sameLvl : pool;
   const wrongPool = shuffle(wrongSource).slice(0, 3);
@@ -1833,14 +2119,8 @@ function renderQuiz() {
       $('score-wrong').textContent = state.qzWrong;
       $('score-total').textContent = state.qzTotal;
 
-      const total = getFiltered(state.qzCategory, state.qzLevel).length;
+      const total = getFiltered(state.currentCat, state.currentLevel === 'All' ? undefined : state.currentLevel).length;
       $('qz-progress').style.width = Math.round((state.qzTotal / total) * 100) + '%';
-
-      // Refresh category progress
-      renderCategories('qz-categories', state.qzCategory, cat => {
-        state.qzCategory = cat;
-        resetQuiz();
-      }, state.qzLevel);
 
       const utterance = speak(card.hr);
 
@@ -1862,7 +2142,7 @@ function renderQuiz() {
   });
 }
 
-function resetQuiz() {
+function initQuiz() {
   state.qzCorrect = 0;
   state.qzWrong = 0;
   state.qzTotal = 0;
@@ -1871,19 +2151,6 @@ function resetQuiz() {
   $('score-wrong').textContent = '0';
   $('score-total').textContent = '0';
   $('qz-progress').style.width = '0%';
-  buildQueue();
-  initQuiz();
-}
-
-function initQuiz() {
-  renderCategories('qz-categories', state.qzCategory, cat => {
-    state.qzCategory = cat;
-    resetQuiz();
-  }, state.qzLevel);
-  renderLevels('qz-levels', state.qzLevel, lvl => {
-    state.qzLevel = lvl;
-    resetQuiz();
-  });
   // Direction toggle
   $('qz-direction').querySelectorAll('.dir-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.dir === state.qzDirection);
@@ -1902,7 +2169,6 @@ function initQuiz() {
 // MATCH GAME
 // ============================================================
 let matchState = {
-  category: 'All',
   pool: [],
   round: [],
   selected: null,
@@ -1913,7 +2179,7 @@ let matchState = {
 
 function buildMatchRound() {
   if (!matchState.pool.length) {
-    matchState.pool = shuffle(getFiltered(matchState.category, state.mtLevel).slice());
+    matchState.pool = shuffle(getFiltered(state.currentCat, state.currentLevel === 'All' ? undefined : state.currentLevel).slice());
   }
   const pairs = matchState.pool.splice(0, 6);
   if (!pairs.length) {
@@ -1985,16 +2251,6 @@ function handleMatchTap(btn, tile) {
     if (word) {
       speak(word.hr);
       saveMastery(word.hr, true);
-      // Refresh category progress
-      renderCategories('mt-categories', matchState.category, cat => {
-        matchState.category = cat;
-        matchState.pool = [];
-        matchState.matched = 0;
-        matchState.mistakes = 0;
-        $('mt-matched').textContent = '0';
-        $('mt-mistakes').textContent = '0';
-        initMatch();
-      }, state.mtLevel);
       updateMasteryBar();
     }
 
@@ -2036,31 +2292,20 @@ function handleMatchTap(btn, tile) {
 }
 
 function initMatch() {
-  renderCategories('mt-categories', matchState.category, cat => {
-    matchState.category = cat;
-    matchState.pool = [];
-    matchState.matched = 0;
-    matchState.mistakes = 0;
-    $('mt-matched').textContent = '0';
-    $('mt-mistakes').textContent = '0';
-    initMatch();
-  }, state.mtLevel);
-  renderLevels('mt-levels', state.mtLevel, lvl => {
-    state.mtLevel = lvl;
-    matchState.pool = [];
-    matchState.matched = 0;
-    matchState.mistakes = 0;
-    $('mt-matched').textContent = '0';
-    $('mt-mistakes').textContent = '0';
-    initMatch();
-  });
-  matchState.pool = shuffle(getFiltered(matchState.category, state.mtLevel).slice());
+  matchState.pool = [];
+  matchState.matched = 0;
+  matchState.mistakes = 0;
+  matchState.selected = null;
+  matchState.busy = false;
+  $('mt-matched').textContent = '0';
+  $('mt-mistakes').textContent = '0';
+  matchState.pool = shuffle(getFiltered(state.currentCat, state.currentLevel === 'All' ? undefined : state.currentLevel).slice());
   buildMatchRound();
 }
 
 $('match-next').addEventListener('click', () => {
   if (!matchState.pool.length) {
-    matchState.pool = shuffle(getFiltered(matchState.category, state.mtLevel).slice());
+    matchState.pool = shuffle(getFiltered(state.currentCat, state.currentLevel === 'All' ? undefined : state.currentLevel).slice());
   }
   buildMatchRound();
 });
@@ -2194,7 +2439,6 @@ function initNumbers() {
 // SENTENCE BUILDER
 // ============================================================
 let blState = {
-  category: 'All',
   queue: [],
   assembled: [],
   correct: 0,
@@ -2203,12 +2447,12 @@ let blState = {
   answered: false
 };
 
-function getSentences(cat) {
-  return getFiltered(cat, 'sentence');
+function getSentences() {
+  return getFiltered(state.currentCat, 'sentence');
 }
 
 function buildBlQueue() {
-  blState.queue = shuffle(getSentences(blState.category).slice());
+  blState.queue = shuffle(getSentences().slice());
 }
 
 function renderBuilder() {
@@ -2345,15 +2589,13 @@ function renderBuilder() {
 }
 
 function initBuilder() {
-  renderCategories('bl-categories', blState.category, cat => {
-    blState.category = cat;
-    blState.correct = 0; blState.wrong = 0; blState.total = 0;
-    blState.queue = [];
-    $('bl-correct').textContent = '0';
-    $('bl-wrong').textContent = '0';
-    $('bl-total').textContent = '0';
-    initBuilder();
-  });
+  blState.correct = 0;
+  blState.wrong = 0;
+  blState.total = 0;
+  blState.queue = [];
+  $('bl-correct').textContent = '0';
+  $('bl-wrong').textContent = '0';
+  $('bl-total').textContent = '0';
   buildBlQueue();
   renderBuilder();
 }
@@ -2641,14 +2883,191 @@ function initDialogue() {
 }
 
 // ============================================================
+// FIREBASE CLOUD SYNC
+// ============================================================
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyBx0K1K_9PL9K_placeholder",
+  authDomain: "hrvatski-vocab.firebaseapp.com",
+  databaseURL: "https://hrvatski-vocab-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "hrvatski-vocab",
+  storageBucket: "hrvatski-vocab.appspot.com",
+  messagingSenderId: "000000000000",
+  appId: "1:000000000000:web:placeholder"
+};
+
+let firebaseReady = false;
+let firebaseDb = null;
+let syncDebounceTimer = null;
+
+function initFirebase() {
+  try {
+    if (typeof firebase === 'undefined') return;
+    firebase.initializeApp(FIREBASE_CONFIG);
+    firebaseDb = firebase.database();
+    firebaseReady = true;
+    updateSyncIndicator('ready');
+  } catch(e) {
+    console.warn('Firebase init failed:', e);
+  }
+}
+
+function getPin() {
+  return localStorage.getItem('hr-pin') || '';
+}
+
+function setPin(pin) {
+  localStorage.setItem('hr-pin', pin);
+}
+
+function showPinPrompt(onDone) {
+  const overlay = document.createElement('div');
+  overlay.className = 'pin-overlay';
+  overlay.innerHTML = `<div class="pin-modal">
+    <h3>Cloud Sync</h3>
+    <p>Enter a 4-digit PIN to sync progress across devices. Use the same PIN on all devices.</p>
+    <input type="tel" maxlength="4" pattern="[0-9]{4}" id="pin-input" placeholder="1234" inputmode="numeric">
+    <button id="pin-save">Save PIN</button>
+    <button class="pin-skip" id="pin-skip">Skip (offline only)</button>
+  </div>`;
+  document.body.appendChild(overlay);
+
+  const input = overlay.querySelector('#pin-input');
+  input.focus();
+
+  overlay.querySelector('#pin-save').addEventListener('click', () => {
+    const val = input.value.trim();
+    if (/^\d{4}$/.test(val)) {
+      setPin(val);
+      overlay.remove();
+      if (onDone) onDone(val);
+    } else {
+      input.style.borderColor = 'var(--error)';
+      input.focus();
+    }
+  });
+
+  overlay.querySelector('#pin-skip').addEventListener('click', () => {
+    overlay.remove();
+    if (onDone) onDone(null);
+  });
+}
+
+function updateSyncIndicator(status) {
+  const el = $('syncIndicator');
+  if (!el) return;
+  if (status === 'synced') {
+    el.innerHTML = '&#9729; Synced';
+    el.className = 'sync-indicator synced';
+  } else if (status === 'syncing') {
+    el.innerHTML = '&#9729; Syncing...';
+    el.className = 'sync-indicator syncing';
+  } else if (status === 'ready') {
+    const pin = getPin();
+    el.innerHTML = pin ? '&#9729; PIN: ' + pin : '&#9729; No PIN';
+    el.className = 'sync-indicator';
+  } else if (status === 'offline') {
+    el.innerHTML = '&#9729; Offline';
+    el.className = 'sync-indicator';
+  } else {
+    el.innerHTML = '';
+    el.className = 'sync-indicator';
+  }
+}
+
+function syncToCloud() {
+  const pin = getPin();
+  if (!firebaseReady || !pin || !firebaseDb) return;
+
+  clearTimeout(syncDebounceTimer);
+  syncDebounceTimer = setTimeout(() => {
+    updateSyncIndicator('syncing');
+    const mastery = getMastery();
+    firebaseDb.ref('users/' + pin + '/mastery').set(mastery)
+      .then(() => {
+        firebaseDb.ref('users/' + pin + '/lastSync').set(Date.now());
+        updateSyncIndicator('synced');
+      })
+      .catch(e => {
+        console.warn('Sync to cloud failed:', e);
+        updateSyncIndicator('ready');
+      });
+  }, 2000);
+}
+
+function syncFromCloud(callback) {
+  const pin = getPin();
+  if (!firebaseReady || !pin || !firebaseDb) {
+    if (callback) callback();
+    return;
+  }
+
+  updateSyncIndicator('syncing');
+  firebaseDb.ref('users/' + pin + '/mastery').once('value')
+    .then(snap => {
+      const cloudData = snap.val();
+      if (cloudData) {
+        const local = getMastery();
+        // Merge: keep higher streak
+        const merged = { ...local };
+        Object.keys(cloudData).forEach(key => {
+          const cloudStreak = (cloudData[key] && cloudData[key].streak) || 0;
+          const localStreak = (local[key] && local[key].streak) || 0;
+          if (cloudStreak > localStreak) {
+            merged[key] = cloudData[key];
+          }
+        });
+        localStorage.setItem('hr-mastery', JSON.stringify(merged));
+        updateMasteryBar();
+      }
+      updateSyncIndicator('synced');
+      if (callback) callback();
+    })
+    .catch(e => {
+      console.warn('Sync from cloud failed:', e);
+      updateSyncIndicator('ready');
+      if (callback) callback();
+    });
+}
+
+// Sync indicator click -> change PIN
+$('syncIndicator').addEventListener('click', () => {
+  showPinPrompt(pin => {
+    if (pin) {
+      syncFromCloud(() => {
+        renderHome();
+        updateMasteryBar();
+      });
+    }
+    updateSyncIndicator('ready');
+  });
+});
+
+// ============================================================
 // INIT
 // ============================================================
-initFlashcards();
-initQuiz();
-initMatch();
-initNumbers();
-initBuilder();
-initDialogue();
+initFirebase();
+
+// Check for PIN on first load
+const savedPin = getPin();
+if (!savedPin) {
+  showPinPrompt(pin => {
+    if (pin) {
+      syncFromCloud(() => {
+        renderHome();
+        updateMasteryBar();
+      });
+    } else {
+      updateSyncIndicator('offline');
+    }
+  });
+} else {
+  syncFromCloud(() => {
+    renderHome();
+    updateMasteryBar();
+  });
+}
+
+renderHome();
 updateMasteryBar();
 
 if ('serviceWorker' in navigator) {

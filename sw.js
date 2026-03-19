@@ -1,4 +1,4 @@
-const CACHE_NAME = 'hrvatski-v5';
+const CACHE_NAME = 'hrvatski-v6';
 const ASSETS = [
   './',
   './index.html',
