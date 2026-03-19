@@ -2684,7 +2684,9 @@ function buildTypingQueue() {
 }
 
 function normalizeAnswer(str) {
-  return str.trim().toLowerCase().replace(/[?.!,;:]+$/g, '');
+  return str.trim().toLowerCase().replace(/[?.!,;:]+$/g, '')
+    .replace(/đ/g, 'd').replace(/Đ/g, 'd')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
 function renderTyping() {
