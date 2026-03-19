@@ -660,6 +660,138 @@ header h1 { font-size: 20px; font-weight: 700; }
 }
 .listen-speaker:active { transform: scale(0.9); }
 
+/* Dialogue mode */
+.dlg-scenario-list {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.dlg-scenario-btn {
+  padding: 16px 20px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: var(--shadow);
+  transition: all 0.2s;
+}
+.light .dlg-scenario-btn { border-color: #e0d8d0; }
+.dlg-scenario-btn:active { transform: scale(0.98); }
+.dlg-scenario-btn .dlg-scenario-title {
+  font-weight: 700;
+  font-size: 16px;
+  margin-bottom: 4px;
+}
+.dlg-scenario-btn .dlg-scenario-desc {
+  font-size: 13px;
+  color: var(--text2);
+}
+.dlg-chat {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.dlg-bubble {
+  max-width: 85%;
+  padding: 12px 16px;
+  border-radius: 16px;
+  font-size: 15px;
+  line-height: 1.4;
+  box-shadow: var(--shadow);
+}
+.dlg-bubble.them {
+  align-self: flex-start;
+  background: var(--card);
+  color: var(--text);
+  border-bottom-left-radius: 4px;
+}
+.dlg-bubble.you {
+  align-self: flex-end;
+  background: var(--accent);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+.dlg-bubble.you.pending {
+  background: rgba(255,255,255,0.08);
+  border: 2px dashed rgba(255,255,255,0.2);
+  color: var(--text2);
+}
+.light .dlg-bubble.you.pending {
+  background: rgba(0,0,0,0.03);
+  border-color: #ddd5cc;
+}
+.dlg-bubble .dlg-speaker {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+  opacity: 0.7;
+}
+.dlg-bubble .dlg-pron {
+  font-size: 12px;
+  opacity: 0.7;
+  font-style: italic;
+  margin-top: 4px;
+}
+.dlg-bubble .dlg-en {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 4px;
+}
+.dlg-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 20px 20px;
+}
+.dlg-choice {
+  padding: 14px 16px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 15px;
+  cursor: pointer;
+  text-align: left;
+  box-shadow: var(--shadow);
+  transition: all 0.2s;
+}
+.light .dlg-choice { border-color: #e0d8d0; }
+.dlg-choice:active { transform: scale(0.98); }
+.dlg-choice.correct {
+  border-color: var(--success);
+  background: rgba(94,189,148,0.15);
+  color: var(--success);
+}
+.dlg-choice.wrong {
+  border-color: var(--error);
+  background: rgba(192,97,58,0.15);
+  color: var(--error);
+}
+.dlg-choice .dlg-choice-en {
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 4px;
+}
+.dlg-back-btn {
+  margin: 16px 20px;
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text2);
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+}
+
 @supports (padding-bottom: env(safe-area-inset-bottom)) {
   .card-nav, .quiz-options, .match-grid, .builder-tiles { padding-bottom: env(safe-area-inset-bottom); }
 }
@@ -680,6 +812,7 @@ header h1 { font-size: 20px; font-weight: 700; }
   <button class="tab" data-tab="match">Match</button>
   <button class="tab" data-tab="numbers">123</button>
   <button class="tab" data-tab="builder">Build</button>
+  <button class="tab" data-tab="dialogue">Talk</button>
   <button class="tab" data-tab="flashcards">Cards</button>
 </div>
 
@@ -692,6 +825,11 @@ header h1 { font-size: 20px; font-weight: 700; }
     </div>
     <div class="mastery-detail" id="mastery-detail"></div>
   </div>
+</div>
+
+<!-- DIALOGUE SCREEN -->
+<div class="screen" id="dialogue-screen">
+  <div id="dlg-content"></div>
 </div>
 
 <!-- FLASHCARD SCREEN -->
@@ -2221,6 +2359,288 @@ function initBuilder() {
 }
 
 // ============================================================
+// DIALOGUES / ROLE-PLAY
+// ============================================================
+const DIALOGUES = [
+  {
+    id: 'neven-weekly',
+    title: 'Weekly check-in with Neven',
+    desc: 'Casual call about how business is going',
+    lines: [
+      {who:'them', name:'Neven', hr:'Bok, Alexandra! Kako si?', en:'Hi Alexandra! How are you?', pron:'бок, алексАндра! кАко си?'},
+      {who:'you', hr:'Bok, Neven! Dobro, hvala. Kako ide posao?', en:'Hi Neven! Good, thanks. How\'s business going?', pron:'бок, нЕвен! дОбро, хвАла. кАко Идэ пОсао?',
+        wrong: ['Bok! Koliko košta?', 'Ne razumijem.']},
+      {who:'them', name:'Neven', hr:'Ma dobro, ništa posebno. Sezona polako počinje.', en:'Fine, nothing special. Season is slowly starting.', pron:'ма дОбро, нИшта посЕбно. сЕзона полАко пОчинье.'},
+      {who:'you', hr:'Ima li problema s osobljem?', en:'Any problems with staff?', pron:'Има ли проблЕма с осОблйем?',
+        wrong: ['Koliko koktela prodajemo?', 'Kad počinju radovi?']},
+      {who:'them', name:'Neven', hr:'Ne, sve je u redu. Svi rade dobro.', en:'No, everything is fine. Everyone is working well.', pron:'нэ, свэ йе у рЕду. сви рАдэ дОбро.'},
+      {who:'you', hr:'Odlično. Kako napreduje novi cjenik?', en:'Excellent. How is the new price list going?', pron:'одлИчно. кАко напрЕдуйе нОви цьЕник?',
+        wrong: ['Treba li nešto popraviti?', 'Koliki su troškovi osoblja?']},
+      {who:'them', name:'Neven', hr:'Pripremam ga, bit će gotov do kraja tjedna.', en:'I\'m preparing it, it\'ll be ready by end of the week.', pron:'припрЕмам га, бит чэ гОтов до крАя тьЕдна.'},
+      {who:'you', hr:'Bilo bi stvarno dobro krenuti s novim cijenama prije sezone.', en:'It would be really good to start with new prices before the season.', pron:'бИло би ствАрно дОбро крЕнути с нОвим циенАма прИйе сЕзонэ.',
+        wrong: ['Možemo li podići koktele na 10 eura?', 'Što se najviše prodaje?']},
+      {who:'them', name:'Neven', hr:'Slažem se. Napravit ću to.', en:'I agree. I\'ll do it.', pron:'слАжем сэ. направИт чу то.'},
+      {who:'you', hr:'Super. Ajde, čujemo se!', en:'Great. Alright, we\'ll be in touch!', pron:'сУпер. Айдэ, чУемо сэ!',
+        wrong: ['Lijep pozdrav.', 'Vidimo se kad dođemo u Pulu.']}
+    ]
+  },
+  {
+    id: 'neven-costs',
+    title: 'Asking Neven about costs',
+    desc: 'Why are material costs up? Energy costs?',
+    lines: [
+      {who:'them', name:'Neven', hr:'Bok! Što ima novog?', en:'Hi! What\'s new?', pron:'бок! што Има нОвог?'},
+      {who:'you', hr:'Bok, Neven. Trebam te pitati nešto o troškovima.', en:'Hi Neven. I need to ask you something about costs.', pron:'бок, нЕвен. трЕбам тэ пИтати нЕшто о трОшковима.',
+        wrong: ['Kako ide posao?', 'Ima li problema s osobljem?']},
+      {who:'them', name:'Neven', hr:'Naravno, reci.', en:'Of course, go ahead.', pron:'нАравно, рЕци.'},
+      {who:'you', hr:'Zašto su troškovi sirovina porasli 9%?', en:'Why are raw material costs up 9%?', pron:'зАшто су трОшкови сировИна порАсли дЕвет пОсто?',
+        wrong: ['Koliko kava dnevno?', 'Treba li nešto naručiti?']},
+      {who:'them', name:'Neven', hr:'Dobavljači su digli cijene, posebno za kavu i pivo.', en:'Suppliers raised prices, especially for coffee and beer.', pron:'добАвлячи су дИгли цИенэ, посЕбно за кАву и пИво.'},
+      {who:'you', hr:'Jesu li to cijene dobavljača, otpad, ili preveliko točenje?', en:'Is it supplier prices, waste, or overpouring?', pron:'йЕсу ли то цИенэ добАвляча, Отпад, или превЕлико тОченье?',
+        wrong: ['Koliko imamo na zalihama?', 'Trebamo podići cijene.']},
+      {who:'them', name:'Neven', hr:'Uglavnom cijene dobavljača. Otpad je minimalan.', en:'Mostly supplier prices. Waste is minimal.', pron:'углАвном цИенэ добАвляча. Отпад йе минимАлан.'},
+      {who:'you', hr:'Dobro. A zašto su troškovi energije porasli 47%?', en:'OK. And why did energy costs go up 47%?', pron:'дОбро. а зАшто су трОшкови энЕргийе порАсли чЕтрдесет сЕдам пОсто?',
+        wrong: ['Treba li nam još ljudi?', 'Što se najviše prodaje?']},
+      {who:'them', name:'Neven', hr:'Nova klima i duže radno vrijeme zimi.', en:'New AC and longer winter hours.', pron:'нОва клИма и дУже рАдно врИеме зИми.'},
+      {who:'you', hr:'Razumijem. Hvala na objašnjenju.', en:'I understand. Thanks for the explanation.', pron:'разУмийем. хвАла на обьяшнЕню.',
+        wrong: ['Ne razumijem.', 'Možete li ponoviti?']}
+    ]
+  },
+  {
+    id: 'neven-renovation',
+    title: 'Discussing the renovation',
+    desc: 'Kameleon upholstery — materials, timing, payment',
+    lines: [
+      {who:'them', name:'Neven', hr:'Imam novosti o tapeciranju!', en:'I have news about the upholstery!', pron:'Имам нОвости о тапецИраню!'},
+      {who:'you', hr:'Odlično! Kad počinju radovi?', en:'Excellent! When do the works start?', pron:'одлИчно! кад пОчиню рАдови?',
+        wrong: ['Koliko to košta?', 'Kakvi su uvjeti plaćanja?']},
+      {who:'them', name:'Neven', hr:'Kameleon može početi sljedeći tjedan. Noćni rad.', en:'Kameleon can start next week. Night work.', pron:'камелЕон мОже пОчети сльЕдечи тьЕдан. нОчни рад.'},
+      {who:'you', hr:'Kakvi su uvjeti plaćanja?', en:'What are the payment terms?', pron:'кАкви су увьЕти плАчаня?',
+        wrong: ['Samo želim fer cijenu.', 'Odlično si to napravio.']},
+      {who:'them', name:'Neven', hr:'50% avans, 50% po završetku.', en:'50% deposit, 50% on completion.', pron:'пЕдесет пОсто Аванс, пЕдесет пОсто по зАвршетку.'},
+      {who:'you', hr:'18.750 EUR s PDV-om je ozbiljan iznos za nas.', en:'18,750 EUR with VAT is a serious amount for us.', pron:'осамнАест тИсуча сЕдамсто пЕдесет Еура с пэдэвЕом йе Озбильян Износ за нас.',
+        wrong: ['Je li to fer cijena?', 'Možemo li na rate?']},
+      {who:'them', name:'Neven', hr:'Znam, ali stanje stolica je stvarno loše.', en:'I know, but the condition of the chairs is really bad.', pron:'знам, али стАнье стОлица йе ствАрно лОшэ.'},
+      {who:'you', hr:'Slažem se s Vašim prijedlogom. Odlično si to napravio.', en:'I agree with your proposal. You did an excellent job with that.', pron:'слАжем сэ с вАшим приедлОгом. одлИчно си то нАправио.',
+        wrong: ['Ne slažem se.', 'Trebamo maknuti ono što se ne prodaje.']}
+    ]
+  },
+  {
+    id: 'enisa-finances',
+    title: 'Calling accountant Enisa',
+    desc: 'Asking about 2025 results and costs',
+    lines: [
+      {who:'you', hr:'Dobar dan, Enisa. Hvala Vam puno na brzom odgovoru.', en:'Good day, Enisa. Thank you very much for your quick reply.', pron:'дОбар дан, энИса. хвАла вам пУно на бРзом одгОвору.',
+        wrong: ['Bok! Kako si?', 'Što ima novog?']},
+      {who:'them', name:'Enisa', hr:'Dobar dan! Nema na čemu. Kako Vam mogu pomoći?', en:'Good day! You\'re welcome. How can I help you?', pron:'дОбар дан! нЕма на чЕму. кАко вам мОгу помОчи?'},
+      {who:'you', hr:'Htjela sam Vas zamoliti za kratki pregled financija.', en:'I wanted to ask you for a brief financial overview.', pron:'хтьЕла сам вас замОлити за крАтки прЕглед финАнция.',
+        wrong: ['Koliki je porez?', 'Jesmo li u plusu ili minusu?']},
+      {who:'them', name:'Enisa', hr:'Naravno. Godina je završena s gubitkom.', en:'Of course. The year ended with a loss.', pron:'нАравно. гОдина йе зАвршена с гУбитком.'},
+      {who:'you', hr:'Gubitak od 13.660 EUR nas zabrinjava. Koliki su troškovi osoblja?', en:'The loss of 13,660 EUR concerns us. What are the staff costs?', pron:'гУбитак од тринАест тИсуча шЕсто шЕздесет Еура нас забрИняава. колИки су трОшкови осОбля?',
+        wrong: ['Možete li usporediti s prošlom godinom?', 'Što točno uključuju nadoknade?']},
+      {who:'them', name:'Enisa', hr:'Troškovi osoblja su 105 tisuća, to je porast od 35%.', en:'Staff costs are 105 thousand, that\'s an increase of 35%.', pron:'трОшкови осОбля су сто пет тИсуча, то йе порАст од трИдесет пет пОсто.'},
+      {who:'you', hr:'Što točno uključuju nadoknade zaposlenicima?', en:'What exactly is included in employee benefits?', pron:'што тОчно уклюЧуйу нАдокнадэ запОсленицима?',
+        wrong: ['Koliki su ukupni prihodi?', 'Može li se preuređenje amortizirati?']},
+      {who:'them', name:'Enisa', hr:'To su regres, božićnica i ostale zakonske obveze.', en:'That\'s regres, Christmas bonus and other legal obligations.', pron:'то су рЕгрес, божИчница и остАлэ зАконскэ Обвезэ.'},
+      {who:'you', hr:'Razumijem. Možete li mi poslati usporedbu s prošlom godinom?', en:'I understand. Can you send me a comparison with last year?', pron:'разУмийем. мОжете ли ми пОслати успОредбу с прОшлом гОдином?',
+        wrong: ['Hvala na pomoći.', 'Je li PDV na preuređenje povrativ?']}
+    ]
+  },
+  {
+    id: 'casual-lidia',
+    title: 'Chatting about Lidia',
+    desc: 'Casual conversation with someone asking about your daughter',
+    lines: [
+      {who:'them', name:'Sugovornik', hr:'Bok! Joj, koja slatka beba! Kako se zove?', en:'Hi! Oh, what a cute baby! What\'s her name?', pron:'бок! йой, кОя слАтка бЕба! кАко сэ зОвэ?'},
+      {who:'you', hr:'Zove se Lidia.', en:'Her name is Lidia.', pron:'зОвэ сэ лИдия.',
+        wrong: ['Ovo je moja kći.', 'Ima jednu godinu.']},
+      {who:'them', name:'Sugovornik', hr:'Prekrasno ime! Koliko ima godina?', en:'Beautiful name! How old is she?', pron:'прекрАсно Имэ! колИко Има гОдина?'},
+      {who:'you', hr:'Ima jednu godinu.', en:'She is one year old.', pron:'Има йЕдну гОдину.',
+        wrong: ['Tako brzo raste.', 'Upravo je počela hodati.']},
+      {who:'them', name:'Sugovornik', hr:'Već hoda?', en:'Is she walking yet?', pron:'вЕч хОда?'},
+      {who:'you', hr:'Da, upravo je počela hodati!', en:'Yes, she just started walking!', pron:'да, Управо йе почЕла хОдати!',
+        wrong: ['Ne spava dobro noću.', 'Jede sve.']},
+      {who:'them', name:'Sugovornik', hr:'Bravo! A govori?', en:'Great! And is she talking?', pron:'брАво! а говОри?'},
+      {who:'you', hr:'Govori svoje prve riječi. Tako brzo raste!', en:'She is saying her first words. She\'s growing so fast!', pron:'говОри свОйе првэ рИечи. тАко бРзо рАстэ!',
+        wrong: ['Jako je znatiželjna.', 'Obožava more.']},
+      {who:'them', name:'Sugovornik', hr:'Potpuno sliči na majku!', en:'She looks just like her mother!', pron:'потпУно слИчи на мАйку!'},
+      {who:'you', hr:'Hvala! Jako je znatiželjna, obožava more.', en:'Thanks! She\'s very curious, she loves the sea.', pron:'хвАла! йАко йе знатижЕльна, обожАва мОрэ.',
+        wrong: ['Malo je umorna danas.', 'Ne spava dobro noću.']}
+    ]
+  },
+  {
+    id: 'notary-meeting',
+    title: 'At the notary in Pula',
+    desc: 'Amending articles of association, appointing new director',
+    lines: [
+      {who:'them', name:'Bilježnik', hr:'Dobar dan. Izvolite sjesti. Što trebate?', en:'Good day. Please sit down. What do you need?', pron:'дОбар дан. извОлитэ сьЕсти. што трЕбатэ?'},
+      {who:'you', hr:'Dobar dan. Želimo izmijeniti društveni ugovor.', en:'Good day. We want to amend the articles of association.', pron:'дОбар дан. жЕлимо измиенИти дрУштвени угОвор.',
+        wrong: ['Trebamo sudskog tumača.', 'Želimo imenovati novog direktora.']},
+      {who:'them', name:'Bilježnik', hr:'U redu. Kakve izmjene?', en:'OK. What kind of amendments?', pron:'у рЕду. кАквэ Измьенэ?'},
+      {who:'you', hr:'Direktor treba suglasnost vlasnika za iznose veće od 5.000 EUR.', en:'The director needs approval from owners for amounts over 5,000 EUR.', pron:'дирЕктор трЕба суглАсност влАсника за Износэ вЕчэ од пет тИсуча Еура.',
+        wrong: ['Gdje trebam potpisati?', 'Obitelj ostaje kao vlasnici.']},
+      {who:'them', name:'Bilježnik', hr:'Razumijem. I želite novog direktora?', en:'I understand. And you want a new director?', pron:'разУмийем. и жЕлитэ нОвог дирЕктора?'},
+      {who:'you', hr:'Da, želimo imenovati novog direktora. Obitelj ostaje kao vlasnici.', en:'Yes, we want to appoint a new director. The family remains as owners.', pron:'да, жЕлимо именовАти нОвог дирЕктора. обИтель остАйе као влАсници.',
+        wrong: ['Prvo trebamo izmijeniti društveni ugovor.', 'Trebamo sudskog tumača za sastanak.']},
+      {who:'them', name:'Bilježnik', hr:'Trebat ćete sudskog tumača jer ne govorite hrvatski.', en:'You\'ll need a court translator since you don\'t speak Croatian.', pron:'трЕбат чэтэ сУдског тУмача йер нэ говОритэ хрвАтски.'},
+      {who:'you', hr:'Da, trebamo sudskog tumača za sastanak. Gdje trebam potpisati?', en:'Yes, we need a court translator for the meeting. Where do I sign?', pron:'да, трЕбамо сУдског тУмача за сАстанак. гдьЕ трЕбам потпИсати?',
+        wrong: ['Ne govorim dobro hrvatski.', 'Koliko to košta?']}
+    ]
+  }
+];
+
+let dlgState = {
+  scenario: null,
+  lineIdx: 0,
+  answered: false
+};
+
+function renderDlgScenarios() {
+  const container = $('dlg-content');
+  container.innerHTML = '<div class="dlg-scenario-list">' +
+    DIALOGUES.map(d =>
+      `<button class="dlg-scenario-btn" data-id="${d.id}">
+        <div class="dlg-scenario-title">${d.title}</div>
+        <div class="dlg-scenario-desc">${d.desc}</div>
+      </button>`
+    ).join('') + '</div>';
+
+  container.querySelectorAll('.dlg-scenario-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      dlgState.scenario = DIALOGUES.find(d => d.id === btn.dataset.id);
+      dlgState.lineIdx = 0;
+      dlgState.answered = false;
+      renderDlgConversation();
+    });
+  });
+}
+
+function renderDlgConversation() {
+  const container = $('dlg-content');
+  const sc = dlgState.scenario;
+  if (!sc) return;
+
+  let html = '<button class="dlg-back-btn" id="dlg-back">&larr; All scenarios</button>';
+  html += '<div class="dlg-chat" id="dlg-chat">';
+
+  // Show all lines up to current
+  for (let i = 0; i <= dlgState.lineIdx && i < sc.lines.length; i++) {
+    const line = sc.lines[i];
+
+    if (line.who === 'them') {
+      html += `<div class="dlg-bubble them">
+        <div class="dlg-speaker">${line.name}</div>
+        ${line.hr}
+        <div class="dlg-en">${line.en}</div>
+        <div class="dlg-pron">${line.pron}</div>
+      </div>`;
+    } else if (i < dlgState.lineIdx || dlgState.answered) {
+      // Already answered your line
+      html += `<div class="dlg-bubble you">
+        <div class="dlg-speaker">You</div>
+        ${line.hr}
+        <div class="dlg-pron">${line.pron}</div>
+      </div>`;
+    } else {
+      // Current your-line: show as pending + choices
+      html += `<div class="dlg-bubble you pending">
+        <div class="dlg-speaker">Your turn</div>
+        What do you say?
+      </div>`;
+    }
+  }
+
+  html += '</div>';
+
+  // Show choices for current line if it's a 'you' line and not yet answered
+  const currentLine = sc.lines[dlgState.lineIdx];
+  if (currentLine && currentLine.who === 'you' && !dlgState.answered) {
+    const choices = shuffle([
+      { text: currentLine.hr, en: currentLine.en, correct: true },
+      ...currentLine.wrong.map(w => ({ text: w, en: '', correct: false }))
+    ]);
+
+    html += '<div class="dlg-choices" id="dlg-choices">' +
+      choices.map((c, i) => `<button class="dlg-choice" data-idx="${i}" data-correct="${c.correct}">${c.text}${c.en ? '<div class="dlg-choice-en">' + c.en + '</div>' : ''}</button>`).join('') +
+      '</div>';
+  }
+
+  container.innerHTML = html;
+
+  // Scroll to bottom
+  const chat = $('dlg-chat');
+  if (chat) chat.scrollTop = chat.scrollHeight;
+
+  // Auto-speak 'them' lines
+  if (currentLine && currentLine.who === 'them') {
+    setTimeout(() => speak(currentLine.hr), 300);
+    // Auto-advance after delay
+    setTimeout(() => {
+      dlgState.lineIdx++;
+      if (dlgState.lineIdx < sc.lines.length) {
+        renderDlgConversation();
+      }
+    }, 2500);
+  }
+
+  // Wire back button
+  const backBtn = $('dlg-back');
+  if (backBtn) backBtn.addEventListener('click', () => {
+    dlgState.scenario = null;
+    renderDlgScenarios();
+  });
+
+  // Wire choices
+  const choiceContainer = $('dlg-choices');
+  if (choiceContainer) {
+    const choiceBtns = choiceContainer.querySelectorAll('.dlg-choice');
+    const choices = shuffle.constructor ? null : null; // just for scoping
+    choiceBtns.forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        if (dlgState.answered) return;
+        dlgState.answered = true;
+
+        // Find if this is correct
+        const isCorrect = btn.dataset.correct === 'true';
+
+        if (isCorrect) {
+          btn.classList.add('correct');
+          saveMastery(currentLine.hr, true);
+        } else {
+          btn.classList.add('wrong');
+          saveMastery(currentLine.hr, false);
+          choiceBtns.forEach(b => {
+            if (b.dataset.correct === 'true') b.classList.add('correct');
+          });
+        }
+
+        updateMasteryBar();
+        speak(currentLine.hr);
+
+        setTimeout(() => {
+          dlgState.lineIdx++;
+          dlgState.answered = false;
+          if (dlgState.lineIdx < sc.lines.length) {
+            renderDlgConversation();
+          } else {
+            // Dialogue complete
+            const container = $('dlg-content');
+            container.innerHTML = '<button class="dlg-back-btn" id="dlg-back">&larr; All scenarios</button>' +
+              '<div style="text-align:center;padding:40px 20px;"><p style="font-size:20px;font-weight:700;color:var(--success);margin-bottom:12px;">Conversation complete!</p>' +
+              '<p style="color:var(--text2);">Try it again or pick another scenario.</p></div>';
+            $('dlg-back').addEventListener('click', () => renderDlgScenarios());
+          }
+        }, 1800);
+      });
+    });
+  }
+}
+
+function initDialogue() {
+  renderDlgScenarios();
+}
+
+// ============================================================
 // INIT
 // ============================================================
 initFlashcards();
@@ -2228,6 +2648,7 @@ initQuiz();
 initMatch();
 initNumbers();
 initBuilder();
+initDialogue();
 updateMasteryBar();
 
 if ('serviceWorker' in navigator) {
