@@ -1,0 +1,2238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#0c1b33">
+<title>Hrvatski za Posao</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%230c1b33' width='100' height='100' rx='20'/><text y='68' x='50' text-anchor='middle' font-size='55'>🇭🇷</text></svg>">
+<style>
+:root {
+  --bg: #0c1b33;
+  --bg2: #0f2540;
+  --card: #1a3a4a;
+  --accent: #c0613a;
+  --text: #ede8e0;
+  --text2: #9aaca0;
+  --success: #5ebd94;
+  --error: #c0613a;
+  --radius: 18px;
+  --shadow: 0 6px 28px rgba(0,0,0,0.35);
+  --cat-prices: #c0613a;
+  --cat-barops: #6b8f5e;
+  --cat-renovation: #8b6f4e;
+  --cat-financials: #4a7fa5;
+  --cat-tax: #7a6b8f;
+  --cat-legal: #5a7a8f;
+  --cat-survival: #c0613a;
+  --cat-time: #4a8f7a;
+  --cat-menu: #8f6b4a;
+  --cat-greetings: #5e8f6b;
+  --cat-family: #b56a8f;
+}
+.light {
+  --bg: #faf6f0;
+  --bg2: #fff8f0;
+  --card: #fff;
+  --accent: #b85636;
+  --text: #2a2420;
+  --text2: #6b6360;
+  --success: #3d9d70;
+  --error: #b85636;
+  --shadow: 0 4px 20px rgba(90,60,30,0.08);
+  --cat-prices: #c0613a;
+  --cat-barops: #5a7f4e;
+  --cat-renovation: #7a5f3e;
+  --cat-financials: #3a6f95;
+  --cat-tax: #6a5b7f;
+  --cat-legal: #4a6a7f;
+  --cat-survival: #b85636;
+  --cat-time: #3a7f6a;
+  --cat-menu: #7f5b3a;
+  --cat-greetings: #4e7f5b;
+  --cat-family: #a55a7f;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.3s, color 0.3s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120'%3E%3Cpath fill='%231a3a4a' fill-opacity='0.12' d='M0,64 C360,120 720,0 1080,64 C1260,96 1380,80 1440,64 L1440,120 L0,120Z'/%3E%3C/svg%3E");
+  background-repeat: repeat-x;
+  background-position: bottom;
+  background-size: 100% 80px;
+}
+body.light {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 120'%3E%3Cpath fill='%23c0613a' fill-opacity='0.06' d='M0,64 C360,120 720,0 1080,64 C1260,96 1380,80 1440,64 L1440,120 L0,120Z'/%3E%3C/svg%3E");
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: var(--bg2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.light header { border-bottom: 1px solid rgba(160,100,60,0.12); }
+header h1 { font-size: 20px; font-weight: 700; }
+.header-btns { display: flex; gap: 8px; }
+.icon-btn {
+  background: none;
+  border: none;
+  color: var(--text2);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+.icon-btn:hover, .icon-btn:active { color: var(--accent); background: rgba(255,255,255,0.05); }
+
+.tabs {
+  display: flex;
+  background: var(--bg2);
+  padding: 0 16px 12px;
+  gap: 8px;
+}
+.tab {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: rgba(255,255,255,0.05);
+  color: var(--text2);
+}
+.light .tab { background: #f0ebe4; }
+.tab.active { background: var(--accent); color: #fff; }
+
+.categories {
+  display: flex;
+  gap: 8px;
+  padding: 16px 20px 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+.categories::-webkit-scrollbar { display: none; }
+.cat-btn {
+  white-space: nowrap;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(255,255,255,0.12);
+  background: transparent;
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.light .cat-btn { border-color: #ddd5cc; }
+.cat-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.progress-bar {
+  margin: 12px 20px 4px;
+  height: 4px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.light .progress-bar { background: #e5ddd5; }
+.progress-fill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.progress-text {
+  font-size: 12px;
+  color: var(--text2);
+  padding: 4px 20px 12px;
+}
+
+.card-container {
+  perspective: 1000px;
+  padding: 20px;
+  min-height: 320px;
+}
+.flashcard {
+  position: relative;
+  width: 100%;
+  min-height: 280px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.5s ease;
+}
+.flashcard.flipped { transform: rotateY(180deg); }
+.card-face {
+  position: absolute;
+  width: 100%;
+  min-height: 280px;
+  backface-visibility: hidden;
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+.card-back { transform: rotateY(180deg); }
+.card-face::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 40'%3E%3Cpath fill='%235ebd94' fill-opacity='0.08' d='M0,20 C100,40 200,0 300,20 C350,30 380,25 400,20 L400,40 L0,40Z'/%3E%3C/svg%3E") no-repeat bottom center;
+  background-size: cover;
+  border-radius: 0 0 var(--radius) var(--radius);
+  pointer-events: none;
+}
+.card-category {
+  font-size: 11px;
+  color: var(--accent);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.card-level {
+  font-size: 10px;
+  color: var(--text2);
+  background: rgba(255,255,255,0.06);
+  padding: 3px 10px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+.light .card-level { background: rgba(0,0,0,0.05); }
+.card-english {
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+.card-croatian {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.3;
+  color: var(--accent);
+  margin-bottom: 12px;
+  cursor: pointer;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+.card-croatian:hover {
+  border-bottom-color: var(--accent);
+}
+.card-pronunciation {
+  font-size: 17px;
+  color: var(--text2);
+  text-align: center;
+  font-style: italic;
+  line-height: 1.4;
+}
+.card-context {
+  font-size: 12px;
+  color: var(--text2);
+  text-align: center;
+  margin-top: 12px;
+  opacity: 0.7;
+  font-style: italic;
+}
+.card-hint {
+  font-size: 13px;
+  color: var(--text2);
+  margin-top: 20px;
+  opacity: 0.5;
+}
+
+.card-nav {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  padding: 0 20px 20px;
+}
+.nav-btn {
+  flex: 1;
+  max-width: 160px;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--card);
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+.nav-btn:active { transform: scale(0.96); }
+.nav-btn.primary { background: var(--accent); color: #fff; }
+
+.quiz-container { padding: 20px; }
+.quiz-question {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 32px 24px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+.quiz-prompt-label {
+  font-size: 12px;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 12px;
+}
+.quiz-prompt {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.quiz-options { display: flex; flex-direction: column; gap: 10px; }
+.quiz-option {
+  padding: 16px 20px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  box-shadow: var(--shadow);
+}
+.light .quiz-option { border-color: #e0d8d0; }
+.quiz-option:active { transform: scale(0.98); }
+.quiz-option.correct {
+  border-color: var(--success);
+  background: rgba(94, 189, 148, 0.15);
+  color: var(--success);
+}
+.quiz-option.wrong {
+  border-color: var(--error);
+  background: rgba(192, 97, 58, 0.15);
+  color: var(--error);
+}
+.quiz-option.disabled { pointer-events: none; }
+
+.quiz-score {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 20px;
+  margin-bottom: 8px;
+}
+.score-item { text-align: center; }
+.score-num { font-size: 28px; font-weight: 700; }
+.score-num.green { color: var(--success); }
+.score-num.red { color: var(--error); }
+.score-label { font-size: 12px; color: var(--text2); }
+
+.quiz-direction {
+  display: flex;
+  gap: 8px;
+  padding: 0 20px 12px;
+}
+.dir-btn {
+  flex: 1;
+  padding: 8px;
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  background: transparent;
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.light .dir-btn { border-color: #ddd5cc; }
+.dir-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+.screen { display: none; }
+.screen.active { display: block; }
+.flashcard:active .card-face { opacity: 0.92; }
+
+/* Speaker button */
+.card-croatian-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+.speak-btn {
+  background: none;
+  border: 1.5px solid rgba(255,255,255,0.15);
+  color: var(--text2);
+  font-size: 20px;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 10px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.light .speak-btn { border-color: #ddd5cc; }
+.speak-btn:hover, .speak-btn:active { color: var(--accent); border-color: var(--accent); }
+
+/* Match game */
+.match-score {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 20px;
+}
+.match-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 12px 20px 20px;
+}
+.match-tile {
+  padding: 14px 10px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+  box-shadow: var(--shadow);
+  min-height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  word-break: break-word;
+  line-height: 1.2;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.light .match-tile { border-color: #e0d8d0; }
+.match-tile:active { transform: scale(0.96); }
+.match-tile.selected {
+  border-color: var(--accent);
+  background: rgba(192, 97, 58, 0.15);
+}
+.match-tile.correct {
+  border-color: var(--success);
+  background: rgba(94, 189, 148, 0.18);
+  color: var(--success);
+}
+.match-tile.wrong {
+  border-color: var(--error);
+  background: rgba(192, 97, 58, 0.18);
+  color: var(--error);
+}
+.match-tile.matched {
+  opacity: 0;
+  transform: scale(0.7);
+  pointer-events: none;
+  transition: all 0.4s ease;
+}
+.match-tile .tile-lang {
+  display: block;
+  font-size: 10px;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.match-done {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text2);
+  font-size: 17px;
+}
+.match-done .nav-btn { margin-top: 16px; }
+
+/* Category pill tints */
+.cat-btn[data-cat="Prices"]:not(.active) { border-color: rgba(192,97,58,0.3); color: var(--cat-prices); }
+.cat-btn[data-cat="Bar Ops"]:not(.active) { border-color: rgba(107,143,94,0.3); color: var(--cat-barops); }
+.cat-btn[data-cat="Renovation"]:not(.active) { border-color: rgba(139,111,78,0.3); color: var(--cat-renovation); }
+.cat-btn[data-cat="Financials"]:not(.active) { border-color: rgba(74,127,165,0.3); color: var(--cat-financials); }
+.cat-btn[data-cat="Tax & Pension"]:not(.active) { border-color: rgba(122,107,143,0.3); color: var(--cat-tax); }
+.cat-btn[data-cat="Legal"]:not(.active) { border-color: rgba(90,122,143,0.3); color: var(--cat-legal); }
+.cat-btn[data-cat="Survival"]:not(.active) { border-color: rgba(192,97,58,0.3); color: var(--cat-survival); }
+.cat-btn[data-cat="Time"]:not(.active) { border-color: rgba(74,143,122,0.3); color: var(--cat-time); }
+.cat-btn[data-cat="Menu"]:not(.active) { border-color: rgba(143,107,74,0.3); color: var(--cat-menu); }
+.cat-btn[data-cat="Greetings"]:not(.active) { border-color: rgba(94,143,107,0.3); color: var(--cat-greetings); }
+.cat-btn[data-cat="Family"]:not(.active) { border-color: rgba(181,106,143,0.3); color: var(--cat-family); }
+
+/* Mastery summary bar */
+.mastery-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: var(--bg2);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.light .mastery-bar { border-bottom: 1px solid rgba(160,100,60,0.08); }
+.mastery-track {
+  flex: 1;
+  height: 8px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.light .mastery-track { background: #e5ddd5; }
+.mastery-fill {
+  height: 100%;
+  background: var(--success);
+  border-radius: 4px;
+  transition: width 0.5s ease;
+}
+.mastery-text {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text2);
+  white-space: nowrap;
+}
+.mastery-text strong {
+  color: var(--success);
+}
+.mastery-detail {
+  font-size: 11px;
+  color: var(--text2);
+  opacity: 0.8;
+}
+
+/* Level filter row */
+.level-filter {
+  display: flex;
+  gap: 8px;
+  padding: 4px 20px 8px;
+}
+
+/* Category progress % */
+.cat-pct {
+  font-size: 10px;
+  margin-left: 4px;
+  opacity: 0.8;
+}
+.cat-pct.green { color: var(--success); }
+
+/* Number drill */
+.num-display {
+  font-size: 56px;
+  font-weight: 800;
+  text-align: center;
+  padding: 32px 24px;
+  color: var(--accent);
+}
+.num-subtitle {
+  text-align: center;
+  color: var(--text2);
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+.num-tier-row {
+  display: flex;
+  gap: 8px;
+  padding: 8px 20px 12px;
+}
+
+/* Sentence builder */
+.builder-prompt {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  margin: 0 20px 16px;
+}
+.builder-prompt-label {
+  font-size: 12px;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+.builder-prompt-text {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.builder-assembled {
+  min-height: 52px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 20px;
+  align-items: center;
+}
+.builder-assembled-word {
+  padding: 8px 14px;
+  border-radius: 10px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.builder-assembled-word:active { transform: scale(0.94); }
+.builder-placeholder {
+  color: var(--text2);
+  font-size: 14px;
+  font-style: italic;
+}
+.builder-tiles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 20px 20px;
+}
+.builder-tile {
+  padding: 10px 16px;
+  border: 2px solid rgba(255,255,255,0.1);
+  border-radius: 10px;
+  background: var(--card);
+  color: var(--text);
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+.light .builder-tile { border-color: #e0d8d0; }
+.builder-tile:active { transform: scale(0.96); }
+.builder-tile.used {
+  opacity: 0.3;
+  pointer-events: none;
+}
+.builder-result {
+  text-align: center;
+  padding: 16px 20px;
+  font-size: 17px;
+  font-weight: 600;
+}
+.builder-result.correct { color: var(--success); }
+.builder-result.wrong { color: var(--error); }
+.builder-correct-answer {
+  text-align: center;
+  padding: 0 20px 12px;
+  color: var(--text2);
+  font-size: 14px;
+}
+.builder-score {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 20px;
+}
+.builder-nav {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding: 8px 20px 20px;
+}
+
+/* Listen mode speaker */
+.listen-speaker {
+  font-size: 64px;
+  cursor: pointer;
+  padding: 16px;
+  transition: transform 0.2s;
+  display: inline-block;
+}
+.listen-speaker:active { transform: scale(0.9); }
+
+@supports (padding-bottom: env(safe-area-inset-bottom)) {
+  .card-nav, .quiz-options, .match-grid, .builder-tiles { padding-bottom: env(safe-area-inset-bottom); }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1><svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;margin-right:6px;"><path d="M12 3c-2 4-6 6-9 7 3 0 6 1 8 3-1-3 0-7 1-10z" fill="#6b8f5e" opacity="0.8"/><path d="M12 3c2 4 6 6 9 7-3 0-6 1-8 3 1-3 0-7-1-10z" fill="#6b8f5e" opacity="0.6"/><ellipse cx="7" cy="8" rx="2.5" ry="1.3" transform="rotate(-30 7 8)" fill="#6b8f5e" opacity="0.5"/><ellipse cx="17" cy="8" rx="2.5" ry="1.3" transform="rotate(30 17 8)" fill="#6b8f5e" opacity="0.4"/><circle cx="12" cy="16" r="1.5" fill="#8b6f4e" opacity="0.6"/><path d="M12 13v8" stroke="#6b8f5e" stroke-width="1.5" opacity="0.5"/></svg>Hrvatski za Posao</h1>
+  <div class="header-btns">
+    <span id="voiceIndicator" style="font-size:11px;color:var(--text2);align-self:center;opacity:0.7"></span>
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle theme">&#9788;</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" data-tab="quiz">Quiz</button>
+  <button class="tab" data-tab="match">Match</button>
+  <button class="tab" data-tab="numbers">123</button>
+  <button class="tab" data-tab="builder">Build</button>
+  <button class="tab" data-tab="flashcards">Cards</button>
+</div>
+
+<div class="mastery-bar" id="mastery-bar">
+  <div style="flex:1;min-width:0">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+      <div class="mastery-text" id="mastery-text">0/0 learned</div>
+      <div class="mastery-track" style="flex:1"><div class="mastery-fill" id="mastery-fill"></div></div>
+      <div class="mastery-text"><strong id="mastery-pct">0%</strong></div>
+    </div>
+    <div class="mastery-detail" id="mastery-detail"></div>
+  </div>
+</div>
+
+<!-- FLASHCARD SCREEN -->
+<div class="screen" id="flashcards-screen">
+  <div class="categories" id="fc-categories"></div>
+  <div class="level-filter" id="fc-levels"></div>
+  <div class="quiz-direction" id="fc-direction">
+    <button class="dir-btn active" data-dir="en-hr">EN &#8594; HR</button>
+    <button class="dir-btn" data-dir="hr-en">HR &#8594; EN</button>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="fc-progress"></div></div>
+  <div class="progress-text" id="fc-progress-text"></div>
+
+  <div class="card-container">
+    <div class="flashcard" id="flashcard">
+      <div class="card-face card-front">
+        <div class="card-category" id="fc-cat"></div>
+        <div class="card-level" id="fc-level"></div>
+        <div class="card-english" id="fc-english"></div>
+        <div class="card-hint">Tap to flip</div>
+      </div>
+      <div class="card-face card-back">
+        <div class="card-category" id="fc-cat2"></div>
+        <div class="card-croatian-row">
+          <div class="card-croatian" id="fc-croatian"></div>
+          <button class="speak-btn" id="fc-speak" aria-label="Listen">&#128264;</button>
+        </div>
+        <div class="card-pronunciation" id="fc-pron"></div>
+        <div class="card-context" id="fc-context"></div>
+        <div class="card-hint">Tap to flip back</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-nav">
+    <button class="nav-btn" id="prevBtn">&#8592; Prev</button>
+    <button class="nav-btn primary" id="nextBtn">Next &#8594;</button>
+  </div>
+</div>
+
+<!-- QUIZ SCREEN -->
+<div class="screen active" id="quiz-screen">
+  <div class="categories" id="qz-categories"></div>
+  <div class="level-filter" id="qz-levels"></div>
+  <div class="quiz-direction" id="qz-direction">
+    <button class="dir-btn active" data-dir="en-hr">EN &#8594; HR</button>
+    <button class="dir-btn" data-dir="hr-en">HR &#8594; EN</button>
+    <button class="dir-btn" data-dir="listen">&#128264; Listen</button>
+  </div>
+  <div class="quiz-score">
+    <div class="score-item"><div class="score-num green" id="score-correct">0</div><div class="score-label">Correct</div></div>
+    <div class="score-item"><div class="score-num" id="score-total">0</div><div class="score-label">Total</div></div>
+    <div class="score-item"><div class="score-num red" id="score-wrong">0</div><div class="score-label">Wrong</div></div>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="qz-progress"></div></div>
+
+  <div class="quiz-container" id="quiz-content"></div>
+</div>
+
+<!-- MATCH SCREEN -->
+<div class="screen" id="match-screen">
+  <div class="categories" id="mt-categories"></div>
+  <div class="level-filter" id="mt-levels"></div>
+  <div class="match-score">
+    <div class="score-item"><div class="score-num green" id="mt-matched">0</div><div class="score-label">Matched</div></div>
+    <div class="score-item"><div class="score-num red" id="mt-mistakes">0</div><div class="score-label">Mistakes</div></div>
+  </div>
+  <div class="match-grid" id="match-grid"></div>
+  <div class="match-done" id="match-done" style="display:none;">
+    <p>All pairs matched!</p>
+    <button class="nav-btn primary" id="match-next">Next Round &#8594;</button>
+  </div>
+</div>
+
+<!-- NUMBERS SCREEN -->
+<div class="screen" id="numbers-screen">
+  <div class="num-tier-row" id="num-tiers"></div>
+  <div class="quiz-score">
+    <div class="score-item"><div class="score-num green" id="num-correct">0</div><div class="score-label">Correct</div></div>
+    <div class="score-item"><div class="score-num" id="num-total">0</div><div class="score-label">Total</div></div>
+    <div class="score-item"><div class="score-num red" id="num-wrong">0</div><div class="score-label">Wrong</div></div>
+  </div>
+  <div class="quiz-container" id="num-content"></div>
+</div>
+
+<!-- BUILDER SCREEN -->
+<div class="screen" id="builder-screen">
+  <div class="categories" id="bl-categories"></div>
+  <div class="builder-score">
+    <div class="score-item"><div class="score-num green" id="bl-correct">0</div><div class="score-label">Correct</div></div>
+    <div class="score-item"><div class="score-num" id="bl-total">0</div><div class="score-label">Total</div></div>
+    <div class="score-item"><div class="score-num red" id="bl-wrong">0</div><div class="score-label">Wrong</div></div>
+  </div>
+  <div id="builder-content"></div>
+</div>
+
+<script>
+// ============================================================
+// WORD DATABASE — targeted to Alexandra's real meetings
+// Each category builds: word -> phrase -> full sentence
+// Sourced from actual email conversations with Neven & Enisa
+// ============================================================
+const WORDS = [
+
+  // ============================================================
+  // NEVEN: PRICES & REVENUE
+  // Words you need when discussing cjenik, price increases, sales
+  // ============================================================
+
+  // -- Key words --
+  {en:"price",hr:"cijena",pron:"цИена",cat:"Prices",lvl:"word"},
+  {en:"prices",hr:"cijene",pron:"цИенэ",cat:"Prices",lvl:"word"},
+  {en:"price list",hr:"cjenik",pron:"цьЕник",cat:"Prices",lvl:"word"},
+  {en:"increase",hr:"povećanje",pron:"повЕчанье",cat:"Prices",lvl:"word"},
+  {en:"to raise / increase",hr:"podići",pron:"подИчи",cat:"Prices",lvl:"word"},
+  {en:"revenue",hr:"prihodi",pron:"прИходи",cat:"Prices",lvl:"word"},
+  {en:"sales",hr:"prodaja",pron:"продАя",cat:"Prices",lvl:"word"},
+  {en:"competition",hr:"konkurencija",pron:"конкурЕнция",cat:"Prices",lvl:"word"},
+  {en:"season",hr:"sezona",pron:"сЕзона",cat:"Prices",lvl:"word"},
+  {en:"cocktails",hr:"kokteli",pron:"кОктели",cat:"Prices",lvl:"word"},
+  {en:"coffee",hr:"kava",pron:"кАва",cat:"Prices",lvl:"word"},
+  {en:"hot drinks",hr:"topli napitci",pron:"тОпли нАпитци",cat:"Prices",lvl:"word"},
+  {en:"spirits",hr:"žestoka pića",pron:"жЕстока пИча",cat:"Prices",lvl:"word"},
+  {en:"beer",hr:"pivo",pron:"пИво",cat:"Prices",lvl:"word"},
+  {en:"menu",hr:"jelovnik",pron:"йЕловник",cat:"Prices",lvl:"word"},
+
+  // -- Phrases --
+  {en:"raise prices",hr:"podići cijene",pron:"подИчи цИенэ",cat:"Prices",lvl:"phrase"},
+  {en:"new price list",hr:"novi cjenik",pron:"нОви цьЕник",cat:"Prices",lvl:"phrase"},
+  {en:"before the season",hr:"prije sezone",pron:"прИйе сЕзонэ",cat:"Prices",lvl:"phrase"},
+  {en:"room for increase",hr:"prostora za povećanje",pron:"прОстора за повЕчанье",cat:"Prices",lvl:"phrase"},
+  {en:"sells poorly",hr:"slabo se prodaje",pron:"слАбо сэ продАйе",cat:"Prices",lvl:"phrase"},
+  {en:"sells the most",hr:"najviše se prodaje",pron:"найвИше сэ продАйе",cat:"Prices",lvl:"phrase"},
+
+  // -- Full sentences (from actual emails to Neven) --
+  {en:"We need to raise prices",hr:"Trebamo podići cijene",pron:"трЕбамо подИчи цИенэ",cat:"Prices",lvl:"sentence",ctx:"Key message to Neven about 2026 profitability"},
+  {en:"How much does the competition charge?",hr:"Koliko konkurencija naplaćuje?",pron:"колИко конкурЕнция наплАчуйе?",cat:"Prices",lvl:"sentence",ctx:"Checking if competitors raised prices too"},
+  {en:"Where do you think we have room to increase?",hr:"Gdje mislite da imamo prostora za povećanje?",pron:"гдьЕ мИслитэ да Имамо прОстора за повЕчанье?",cat:"Prices",lvl:"sentence",ctx:"Asking Neven's opinion on which items to raise"},
+  {en:"Can we raise cocktails to 10 euros?",hr:"Možemo li podići koktele na 10 eura?",pron:"мОжемо ли подИчи кОктелэ на дЕсет Еура?",cat:"Prices",lvl:"sentence",ctx:"Specific price target for cocktails"},
+  {en:"How is the new price list going?",hr:"Kako napreduje novi cjenik?",pron:"кАко напрЕдуйе нОви цьЕник?",cat:"Prices",lvl:"sentence",ctx:"Following up on cjenik preparation"},
+  {en:"It would be really good to start with new prices before the season",hr:"Bilo bi stvarno dobro krenuti s novim cijenama prije sezone",pron:"бИло би ствАрно дОбро крЕнути с нОвим циенАма прИйе сЕзонэ",cat:"Prices",lvl:"sentence",ctx:"Urgency about timing"},
+  {en:"What sells the most?",hr:"Što se najviše prodaje?",pron:"што сэ найвИше продАйе?",cat:"Prices",lvl:"sentence"},
+  {en:"Is there anything on the menu that sells poorly?",hr:"Ima li nešto na meniju što se slabo prodaje?",pron:"Има ли нЕшто на мЕнию што сэ слАбо продАйе?",cat:"Prices",lvl:"sentence",ctx:"Identifying items to drop or reprice"},
+  {en:"Have others raised their prices in the meantime?",hr:"Jesu li se drugi u međuvremenu dizali s cijenama?",pron:"йЕсу ли сэ дрУги у мэджуврЕмену дИзали с циенАма?",cat:"Prices",lvl:"sentence",ctx:"Competitive intelligence"},
+
+  // ============================================================
+  // NEVEN: BAR OPERATIONS
+  // Day-to-day bar management questions
+  // ============================================================
+
+  // -- Key words --
+  {en:"business",hr:"posao",pron:"пОсао",cat:"Bar Ops",lvl:"word"},
+  {en:"staff / employees",hr:"osoblje",pron:"осОблье",cat:"Bar Ops",lvl:"word"},
+  {en:"guests / customers",hr:"gosti",pron:"гОсти",cat:"Bar Ops",lvl:"word"},
+  {en:"supplier",hr:"dobavljač",pron:"добАвляч",cat:"Bar Ops",lvl:"word"},
+  {en:"stock / inventory",hr:"zalihe",pron:"зАлихэ",cat:"Bar Ops",lvl:"word"},
+  {en:"order (to place)",hr:"naručiti",pron:"нарУчити",cat:"Bar Ops",lvl:"word"},
+  {en:"problem",hr:"problem",pron:"проблЕм",cat:"Bar Ops",lvl:"word"},
+  {en:"fix / repair",hr:"popraviti",pron:"попрАвити",cat:"Bar Ops",lvl:"word"},
+  {en:"raw materials",hr:"sirovine",pron:"сирОвинэ",cat:"Bar Ops",lvl:"word"},
+  {en:"costs",hr:"troškovi",pron:"трОшкови",cat:"Bar Ops",lvl:"word"},
+  {en:"waste",hr:"otpad",pron:"Отпад",cat:"Bar Ops",lvl:"word"},
+  {en:"energy",hr:"energija",pron:"энЕргия",cat:"Bar Ops",lvl:"word"},
+
+  // -- Phrases --
+  {en:"how's business?",hr:"kako ide posao?",pron:"кАко Идэ пОсао?",cat:"Bar Ops",lvl:"phrase"},
+  {en:"any problems?",hr:"je li bilo problema?",pron:"йе ли бИло проблЕма?",cat:"Bar Ops",lvl:"phrase"},
+  {en:"how many guests per day?",hr:"koliko gostiju dnevno?",pron:"колИко гОстию днЕвно?",cat:"Bar Ops",lvl:"phrase"},
+  {en:"staff problems",hr:"problemi s osobljem",pron:"проблЕми с осОблйем",cat:"Bar Ops",lvl:"phrase"},
+
+  // -- Full sentences --
+  {en:"How's business going?",hr:"Kako ide posao?",pron:"кАко Идэ пОсао?",cat:"Bar Ops",lvl:"sentence",ctx:"Standard weekly check-in opener"},
+  {en:"Any problems with staff?",hr:"Ima li problema s osobljem?",pron:"Има ли проблЕма с осОблйем?",cat:"Bar Ops",lvl:"sentence"},
+  {en:"Do we need to order anything?",hr:"Treba li nešto naručiti?",pron:"трЕба ли нЕшто нарУчити?",cat:"Bar Ops",lvl:"sentence"},
+  {en:"Does anything need fixing?",hr:"Treba li nešto popraviti?",pron:"трЕба ли нЕшто попрАвити?",cat:"Bar Ops",lvl:"sentence"},
+  {en:"How much do we have in stock?",hr:"Koliko imamo na zalihama?",pron:"колИко Имамо на зАлихама?",cat:"Bar Ops",lvl:"sentence"},
+  {en:"How many coffees do we sell per day?",hr:"Koliko kava dnevno?",pron:"колИко кАва днЕвно?",cat:"Bar Ops",lvl:"sentence"},
+  {en:"Why are raw material costs up 9%?",hr:"Zašto su troškovi sirovina porasli 9%?",pron:"зАшто су трОшкови сировИна порАсли дЕвет пОсто?",cat:"Bar Ops",lvl:"sentence",ctx:"Key question about 2025 cost increase on flat revenue"},
+  {en:"Is it supplier prices, waste, or overpouring?",hr:"Jesu li to cijene dobavljača, otpad, ili preveliko točenje?",pron:"йЕсу ли то цИенэ добАвляча, Отпад, или превЕлико тОченье?",cat:"Bar Ops",lvl:"sentence",ctx:"Drilling into the 102K vs 94K raw materials gap"},
+  {en:"Why did energy costs go up 47%?",hr:"Zašto su troškovi energije porasli 47%?",pron:"зАшто су трОшкови энЕргийе порАсли чЕтрдесет сЕдам пОсто?",cat:"Bar Ops",lvl:"sentence",ctx:"Energy 9.3K to 13.7K — big jump"},
+  {en:"Do we need more people?",hr:"Treba li nam još ljudi?",pron:"трЕба ли нам йош льУди?",cat:"Bar Ops",lvl:"sentence"},
+
+  // ============================================================
+  // NEVEN: RENOVATION
+  // Upholstery, Kameleon, materials, work schedule
+  // ============================================================
+
+  // -- Key words --
+  {en:"renovation",hr:"preuređenje",pron:"преурЕдженье",cat:"Renovation",lvl:"word"},
+  {en:"upholstery",hr:"tapeciranje",pron:"тапецИранье",cat:"Renovation",lvl:"word"},
+  {en:"chairs",hr:"stolice",pron:"стОлицэ",cat:"Renovation",lvl:"word"},
+  {en:"booths",hr:"separeji",pron:"сЕпарейи",cat:"Renovation",lvl:"word"},
+  {en:"carpet",hr:"tepih",pron:"тЕпих",cat:"Renovation",lvl:"word"},
+  {en:"fabric / material",hr:"tkanina",pron:"ткАнина",cat:"Renovation",lvl:"word"},
+  {en:"water-repellent",hr:"vodootporni",pron:"водоотпОрни",cat:"Renovation",lvl:"word"},
+  {en:"washable",hr:"perivi",pron:"пЕриви",cat:"Renovation",lvl:"word"},
+  {en:"quote / offer",hr:"ponuda",pron:"пОнуда",cat:"Renovation",lvl:"word"},
+  {en:"payment",hr:"plaćanje",pron:"плАчанье",cat:"Renovation",lvl:"word"},
+  {en:"advance / deposit",hr:"avans",pron:"Аванс",cat:"Renovation",lvl:"word"},
+  {en:"in installments",hr:"na rate",pron:"на рАтэ",cat:"Renovation",lvl:"word"},
+  {en:"deadline",hr:"rok",pron:"рок",cat:"Renovation",lvl:"word"},
+  {en:"start of works",hr:"početak radova",pron:"пОчетак рАдова",cat:"Renovation",lvl:"word"},
+  {en:"condition / state",hr:"stanje",pron:"стАнье",cat:"Renovation",lvl:"word"},
+
+  // -- Phrases --
+  {en:"start of works",hr:"početak radova",pron:"пОчетак рАдова",cat:"Renovation",lvl:"phrase"},
+  {en:"payment terms",hr:"uvjeti plaćanja",pron:"увьЕти плАчаня",cat:"Renovation",lvl:"phrase"},
+  {en:"in what condition",hr:"u kakvom stanju",pron:"у кАквом стАню",cat:"Renovation",lvl:"phrase"},
+  {en:"fair price",hr:"fer cijena",pron:"фер цИена",cat:"Renovation",lvl:"phrase"},
+  {en:"night work",hr:"noćni rad",pron:"нОчни рад",cat:"Renovation",lvl:"phrase"},
+
+  // -- Full sentences --
+  {en:"When do the works start?",hr:"Kad počinju radovi?",pron:"кад пОчиню рАдови?",cat:"Renovation",lvl:"sentence",ctx:"Asking Neven about Kameleon start date"},
+  {en:"What are the payment terms?",hr:"Kakvi su uvjeti plaćanja?",pron:"кАкви су увьЕти плАчаня?",cat:"Renovation",lvl:"sentence",ctx:"Deposit, on completion, or installments?"},
+  {en:"Is it deposit, on completion, or installments?",hr:"Je li avans, po završetku, ili na rate?",pron:"йе ли Аванс, по зАвршетку, или на рАтэ?",cat:"Renovation",lvl:"sentence",ctx:"Specific payment options"},
+  {en:"I saw the condition of the booths and chairs",hr:"Vidjela sam u kakvom su stanju separeji i stolice",pron:"вИдьела сам у кАквом су стАню сЕпарейи и стОлицэ",cat:"Renovation",lvl:"sentence",ctx:"From March email explaining why renovation needed"},
+  {en:"18,750 EUR with VAT is a serious amount for us",hr:"18.750 EUR s PDV-om je ozbiljan iznos za nas",pron:"осамнАест тИсуча сЕдамсто пЕдесет Еура с пэдэвЕом йе Озбильян Износ за нас",cat:"Renovation",lvl:"sentence",ctx:"Expressing cost concern"},
+  {en:"I just want to make sure we're getting a fair price",hr:"Samo želim da budemo sigurni da dobijamo fer cijenu",pron:"сАмо жЕлим да бУдемо сИгурни да добИямо фер цИену",cat:"Renovation",lvl:"sentence"},
+  {en:"You did an excellent job with that",hr:"Odlično si to napravio",pron:"одлИчно си то нАправио",cat:"Renovation",lvl:"sentence",ctx:"Praising Neven's material selection"},
+  {en:"The bordo and dark green combination is lovely",hr:"Kombinacija bordo i tamno zelene je odlična",pron:"комбинАция бОрдо и тАмно зЕленэ йе одлИчна",cat:"Renovation",lvl:"sentence",ctx:"Approving the fabric choices"},
+
+  // ============================================================
+  // ENISA: FINANCIALS
+  // P&L, balance sheet, year-end, cost questions
+  // ============================================================
+
+  // -- Key words --
+  {en:"revenue / income",hr:"prihodi",pron:"прИходи",cat:"Financials",lvl:"word"},
+  {en:"expenses",hr:"rashodi",pron:"рАшоди",cat:"Financials",lvl:"word"},
+  {en:"profit",hr:"dobit",pron:"дОбит",cat:"Financials",lvl:"word"},
+  {en:"loss",hr:"gubitak",pron:"гУбитак",cat:"Financials",lvl:"word"},
+  {en:"result",hr:"rezultat",pron:"рЕзултат",cat:"Financials",lvl:"word"},
+  {en:"staff costs",hr:"troškovi osoblja",pron:"трОшкови осОбля",cat:"Financials",lvl:"word"},
+  {en:"material costs",hr:"materijalni troškovi",pron:"материйАлни трОшкови",cat:"Financials",lvl:"word"},
+  {en:"employee benefits",hr:"nadoknade zaposlenicima",pron:"нАдокнадэ запОсленицима",cat:"Financials",lvl:"word"},
+  {en:"trade payables",hr:"obveze prema dobavljačima",pron:"Обвезэ прЕма добАвлячима",cat:"Financials",lvl:"word"},
+  {en:"raw materials",hr:"sirovine i materijal",pron:"сирОвинэ и материйАл",cat:"Financials",lvl:"word"},
+  {en:"comparison",hr:"usporedba",pron:"успОредба",cat:"Financials",lvl:"word"},
+  {en:"report",hr:"izvještaj",pron:"извьЕштай",cat:"Financials",lvl:"word"},
+  {en:"annual report",hr:"godišnji izvještaj",pron:"гОдишньи извьЕштай",cat:"Financials",lvl:"word"},
+  {en:"balance sheet",hr:"bilanca",pron:"билАнца",cat:"Financials",lvl:"word"},
+  {en:"P&L statement",hr:"račun dobiti i gubitka",pron:"рАчун дОбити и гУбитка",cat:"Financials",lvl:"word"},
+  {en:"depreciation",hr:"amortizacija",pron:"амортизАция",cat:"Financials",lvl:"word"},
+  {en:"VAT",hr:"PDV",pron:"пэ-дэ-вэ",cat:"Financials",lvl:"word"},
+  {en:"net salary",hr:"neto plaća",pron:"нЕто плАча",cat:"Financials",lvl:"word"},
+  {en:"gross salary",hr:"bruto plaća",pron:"брУто плАча",cat:"Financials",lvl:"word"},
+  {en:"contributions",hr:"doprinosi",pron:"дОприноси",cat:"Financials",lvl:"word"},
+  {en:"accumulated losses",hr:"preneseni gubitak",pron:"прЕнесени гУбитак",cat:"Financials",lvl:"word"},
+  {en:"in profit",hr:"u plusu",pron:"у плУсу",cat:"Financials",lvl:"word"},
+  {en:"in the red / at a loss",hr:"u minusu",pron:"у мИнусу",cat:"Financials",lvl:"word"},
+  {en:"percent",hr:"posto",pron:"пОсто",cat:"Financials",lvl:"word"},
+  {en:"percentage",hr:"postotak",pron:"пОстотак",cat:"Financials",lvl:"word"},
+
+  // -- Phrases --
+  {en:"how did the year finish?",hr:"kako je završila godina?",pron:"кАко йе завРшила гОдина?",cat:"Financials",lvl:"phrase"},
+  {en:"overview of finances",hr:"pregled financija",pron:"прЕглед финАнция",cat:"Financials",lvl:"phrase"},
+  {en:"comparison with last year",hr:"usporedba s prošlom godinom",pron:"успОредба с прОшлом гОдином",cat:"Financials",lvl:"phrase"},
+  {en:"the loss concerns us",hr:"gubitak nas zabrinjava",pron:"гУбитак нас забрИняава",cat:"Financials",lvl:"phrase"},
+
+  // -- Full sentences (from actual emails to Enisa) --
+  {en:"I wanted to ask you for a brief financial overview",hr:"Htjela sam Vas zamoliti za kratki pregled financija",pron:"хтьЕла сам вас замОлити за крАтки прЕглед финАнция",cat:"Financials",lvl:"sentence",ctx:"Opening request to Enisa for reports"},
+  {en:"How did 2025 finish?",hr:"Kako je završila 2025. godina?",pron:"кАко йе завРшила двадесет двАдесет пЕта гОдина?",cat:"Financials",lvl:"sentence"},
+  {en:"What is the total revenue?",hr:"Koliki su ukupni prihodi?",pron:"колИки су укУпни прИходи?",cat:"Financials",lvl:"sentence"},
+  {en:"What are the total expenses?",hr:"Koliki su ukupni rashodi?",pron:"колИки су укУпни рАшоди?",cat:"Financials",lvl:"sentence"},
+  {en:"Are we in profit or loss?",hr:"Jesmo li u plusu ili minusu?",pron:"йЕсмо ли у плУсу Или мИнусу?",cat:"Financials",lvl:"sentence"},
+  {en:"What are the staff costs?",hr:"Koliki su troškovi osoblja?",pron:"колИки су трОшкови осОбля?",cat:"Financials",lvl:"sentence"},
+  {en:"Can you compare with last year?",hr:"Možete li usporediti s prošlom godinom?",pron:"мОжете ли успорЕдити с прОшлом гОдином?",cat:"Financials",lvl:"sentence"},
+  {en:"The loss of 13,660 EUR concerns us",hr:"Gubitak od 13.660 EUR nas zabrinjava",pron:"гУбитак од тринАест тИсуча шЕсто шЕздесет Еура нас забрИняава",cat:"Financials",lvl:"sentence",ctx:"Expressing concern about 2025 result"},
+  {en:"What exactly is included in employee benefits?",hr:"Što točno uključuju nadoknade zaposlenicima?",pron:"што тОчно уклюЧуйу нАдокнадэ запОсленицима?",cat:"Financials",lvl:"sentence",ctx:"Asking about 15,133 in AOP 279"},
+  {en:"Are trade payables overdue or just timing?",hr:"Jesu li obveze prema dobavljačima dospjele ili je to samo pitanje vremena?",pron:"йЕсу ли Обвезэ прЕма добАвлячима доспьЕлэ Или йе то сАмо пИтанье врЕмена?",cat:"Financials",lvl:"sentence",ctx:"Trade payables jumped 4K to 12.5K"},
+  {en:"Can you send me a comparison with last year?",hr:"Možete li mi poslati usporedbu s prošlom godinom?",pron:"мОжете ли ми пОслати успОредбу с прОшлом гОдином?",cat:"Financials",lvl:"sentence"},
+  {en:"It would be very useful to get at least an approximate overview",hr:"Bilo bi mi jako korisno dobiti barem okvirni pregled",pron:"бИло би ми йАко корИсно добИти бАрем Оквирни прЕглед",cat:"Financials",lvl:"sentence",ctx:"When requesting unofficial numbers"},
+  {en:"Just roughly — revenue, expenses, and result",hr:"Samo otprilike — prihodi, rashodi i rezultat",pron:"сАмо отпрИликэ — прИходи, рАшоди и рЕзултат",cat:"Financials",lvl:"sentence",ctx:"Clarifying you don't need official form"},
+
+  // ============================================================
+  // ENISA: PENSION & TAX
+  // Pension payments, tax authority, director change
+  // ============================================================
+
+  // -- Key words --
+  {en:"pension insurance",hr:"mirovinsko osiguranje",pron:"мировИнско осигУранье",cat:"Tax & Pension",lvl:"word"},
+  {en:"payment slip",hr:"uplatnica",pron:"уплАтница",cat:"Tax & Pension",lvl:"word"},
+  {en:"tax authority",hr:"Porezna uprava",pron:"пОрезна упрАва",cat:"Tax & Pension",lvl:"word"},
+  {en:"income tax",hr:"porez na dobit",pron:"пОрез на дОбит",cat:"Tax & Pension",lvl:"word"},
+  {en:"tax",hr:"porez",pron:"пОрез",cat:"Tax & Pension",lvl:"word"},
+  {en:"payment",hr:"uplata",pron:"уплАта",cat:"Tax & Pension",lvl:"word"},
+  {en:"debt / amount due",hr:"dug",pron:"дуг",cat:"Tax & Pension",lvl:"word"},
+  {en:"balance / status",hr:"stanje",pron:"стАнье",cat:"Tax & Pension",lvl:"word"},
+  {en:"power of attorney",hr:"punomoć",pron:"пУномочь",cat:"Tax & Pension",lvl:"word"},
+  {en:"reclassification (of payment)",hr:"preknjižavanje",pron:"прекньижАванье",cat:"Tax & Pension",lvl:"word"},
+  {en:"monthly",hr:"mjesečno",pron:"мьЕсечно",cat:"Tax & Pension",lvl:"word"},
+  {en:"regularly",hr:"redovito",pron:"рЕдовито",cat:"Tax & Pension",lvl:"word"},
+
+  // -- Phrases --
+  {en:"check the balance",hr:"provjeriti stanje",pron:"провьЕрити стАнье",cat:"Tax & Pension",lvl:"phrase"},
+  {en:"pay regularly every month",hr:"plaćati redovito svaki mjesec",pron:"плАчати рЕдовито свАки мьЕсец",cat:"Tax & Pension",lvl:"phrase"},
+  {en:"by mistake",hr:"greškom",pron:"грЕшком",cat:"Tax & Pension",lvl:"phrase"},
+
+  // -- Full sentences --
+  {en:"I paid all three pension insurance slips",hr:"Uplatila sam sve tri uplatnice za mirovinsko osiguranje",pron:"уплАтила сам свэ три уплАтницэ за мировИнско осигУранье",cat:"Tax & Pension",lvl:"sentence",ctx:"Confirming pension payments were made"},
+  {en:"I paid from the wrong account by mistake",hr:"Greškom sam uplatila s krivog računa",pron:"грЕшком сам уплАтила с крИвог рАчуна",cat:"Tax & Pension",lvl:"sentence",ctx:"Explaining the Natalia/Alexey mix-up"},
+  {en:"Can you check the balance with the Tax Authority?",hr:"Možete li provjeriti stanje kod Porezne uprave?",pron:"мОжете ли провьЕрити стАнье код пОрезнэ упрАвэ?",cat:"Tax & Pension",lvl:"sentence",ctx:"Asking Enisa to verify pension balance"},
+  {en:"From now on we will pay regularly every month",hr:"Od sada ćemo plaćati redovito svaki mjesec",pron:"од сАда чемо плАчати рЕдовито свАки мьЕсец",cat:"Tax & Pension",lvl:"sentence",ctx:"Committing to regular pension payments"},
+  {en:"How much is the tax?",hr:"Koliki je porez?",pron:"колИки йе пОрез?",cat:"Tax & Pension",lvl:"sentence"},
+  {en:"Is the VAT on the renovation recoverable?",hr:"Je li PDV na preuređenje povrativ?",pron:"йе ли пэдэвЕ на преурЕдженье поврАтив?",cat:"Tax & Pension",lvl:"sentence",ctx:"3,750 EUR PDV on Kameleon — pretporez question"},
+  {en:"Can the renovation be depreciated over several years?",hr:"Može li se preuređenje amortizirati kroz više godina?",pron:"мОже ли сэ преурЕдженье амортизИрати кроз вИше гОдина?",cat:"Tax & Pension",lvl:"sentence",ctx:"Key question: capitalise vs expense the 15K"},
+
+  // ============================================================
+  // LEGAL / NOTARY
+  // Director change, articles of association, property
+  // ============================================================
+
+  // -- Key words --
+  {en:"director",hr:"direktor",pron:"дирЕктор",cat:"Legal",lvl:"word"},
+  {en:"owner",hr:"vlasnik",pron:"влАсник",cat:"Legal",lvl:"word"},
+  {en:"articles of association",hr:"društveni ugovor",pron:"дрУштвени угОвор",cat:"Legal",lvl:"word"},
+  {en:"amendment",hr:"izmjena",pron:"Измьена",cat:"Legal",lvl:"word"},
+  {en:"signature",hr:"potpis",pron:"пОтпис",cat:"Legal",lvl:"word"},
+  {en:"notary",hr:"javni bilježnik",pron:"йАвни бИльежник",cat:"Legal",lvl:"word"},
+  {en:"court translator",hr:"sudski tumač",pron:"сУдски тУмач",cat:"Legal",lvl:"word"},
+  {en:"commercial court",hr:"trgovački sud",pron:"тргОвачки суд",cat:"Legal",lvl:"word"},
+  {en:"assembly (of owners)",hr:"skupština",pron:"скУпштина",cat:"Legal",lvl:"word"},
+  {en:"decision / resolution",hr:"odluka",pron:"Одлука",cat:"Legal",lvl:"word"},
+  {en:"appointment (of director)",hr:"imenovanje",pron:"именовАнье",cat:"Legal",lvl:"word"},
+  {en:"dismissal",hr:"opoziv",pron:"Опозив",cat:"Legal",lvl:"word"},
+  {en:"without limitations",hr:"bez ograničenja",pron:"без ограничЕня",cat:"Legal",lvl:"word"},
+  {en:"approval required",hr:"potrebna suglasnost",pron:"потрЕбна суглАсност",cat:"Legal",lvl:"word"},
+  {en:"property / real estate",hr:"nekretnina",pron:"некрЕтнина",cat:"Legal",lvl:"word"},
+  {en:"loan",hr:"zajam",pron:"зАям",cat:"Legal",lvl:"word"},
+  {en:"spending limit",hr:"ograničenje troškova",pron:"ограничЕнье трОшкова",cat:"Legal",lvl:"word"},
+
+  // -- Phrases --
+  {en:"change of director",hr:"promjena direktora",pron:"прОмьена дирЕктора",cat:"Legal",lvl:"phrase"},
+  {en:"amendment of articles",hr:"izmjena društvenog ugovora",pron:"Измьена дрУштвеног угОвора",cat:"Legal",lvl:"phrase"},
+  {en:"fixed-term appointment",hr:"imenovanje na određeno vrijeme",pron:"именовАнье на одрЕджено врИеме",cat:"Legal",lvl:"phrase"},
+  {en:"owner approval",hr:"suglasnost vlasnika",pron:"суглАсност влАсника",cat:"Legal",lvl:"phrase"},
+
+  // -- Full sentences --
+  {en:"We want to appoint a new director",hr:"Želimo imenovati novog direktora",pron:"жЕлимо именовАти нОвог дирЕктора",cat:"Legal",lvl:"sentence",ctx:"Main purpose of Pula trip — appointing Neven"},
+  {en:"We need to amend the articles of association first",hr:"Prvo trebamo izmijeniti društveni ugovor",pron:"пРво трЕбамо измиенИти дрУштвени угОвор",cat:"Legal",lvl:"sentence",ctx:"Must add spending limits before appointing Neven"},
+  {en:"The director needs approval from owners for amounts over 5,000 EUR",hr:"Direktor treba suglasnost vlasnika za iznose veće od 5.000 EUR",pron:"дирЕктор трЕба суглАсност влАсника за Износэ вЕчэ од пет тИсуча Еура",cat:"Legal",lvl:"sentence",ctx:"Key amendment to Article 10"},
+  {en:"The family remains as owners",hr:"Obitelj ostaje kao vlasnici",pron:"обИтель остАйе као влАсници",cat:"Legal",lvl:"sentence",ctx:"Clarifying that only director changes, not ownership"},
+  {en:"We need a court translator for the meeting",hr:"Trebamo sudskog tumača za sastanak",pron:"трЕбамо сУдског тУмача за сАстанак",cat:"Legal",lvl:"sentence",ctx:"Founders don't speak Croatian"},
+  {en:"Where do I sign?",hr:"Gdje trebam potpisati?",pron:"гдьЕ трЕбам потпИсати?",cat:"Legal",lvl:"sentence"},
+
+  // ============================================================
+  // SURVIVAL — Phrases you need in any meeting
+  // ============================================================
+  {en:"I agree",hr:"Slažem se",pron:"слАжем сэ",cat:"Survival",lvl:"phrase"},
+  {en:"I agree with your proposal",hr:"Slažem se s Vašim prijedlogom",pron:"слАжем сэ с вАшим приедлОгом",cat:"Survival",lvl:"sentence",ctx:"From actual emails to Neven"},
+  {en:"I don't agree",hr:"Ne slažem se",pron:"нэ слАжем сэ",cat:"Survival",lvl:"phrase"},
+  {en:"I understand",hr:"Razumijem",pron:"разУмийем",cat:"Survival",lvl:"word"},
+  {en:"I don't understand",hr:"Ne razumijem",pron:"нэ разУмийем",cat:"Survival",lvl:"phrase"},
+  {en:"Can you speak more slowly?",hr:"Možete li govoriti polako?",pron:"мОжете ли говОрити полАко?",cat:"Survival",lvl:"sentence"},
+  {en:"Can you repeat?",hr:"Možete li ponoviti?",pron:"мОжете ли понОвити?",cat:"Survival",lvl:"sentence"},
+  {en:"Can you write it down?",hr:"Možete li napisati?",pron:"мОжете ли напИсати?",cat:"Survival",lvl:"sentence"},
+  {en:"What does that mean?",hr:"Što to znači?",pron:"што то знАчи?",cat:"Survival",lvl:"sentence"},
+  {en:"I don't speak Croatian well",hr:"Ne govorim dobro hrvatski",pron:"нэ говОрим дОбро хрвАтски",cat:"Survival",lvl:"sentence"},
+  {en:"I speak Russian",hr:"Govorim ruski",pron:"говОрим рУски",cat:"Survival",lvl:"sentence"},
+  {en:"Thank you very much for your quick reply",hr:"Hvala Vam puno na brzom odgovoru",pron:"хвАла вам пУно на бРзом одгОвору",cat:"Survival",lvl:"sentence",ctx:"Standard email opener to Enisa"},
+  {en:"Thank you for your help",hr:"Hvala vam na pomoći",pron:"хвАла вам на пОмочи",cat:"Survival",lvl:"sentence"},
+  {en:"Can you send me...?",hr:"Možete li mi poslati...?",pron:"мОжете ли ми пОслати?",cat:"Survival",lvl:"sentence"},
+  {en:"When will it be ready?",hr:"Kada će biti gotovo?",pron:"кАда чэ бИти гОтово?",cat:"Survival",lvl:"sentence"},
+  {en:"How much does it cost?",hr:"Koliko to košta?",pron:"колИко то кОшта?",cat:"Survival",lvl:"sentence"},
+  {en:"Is that possible?",hr:"Je li to moguće?",pron:"йе ли то мОгуче?",cat:"Survival",lvl:"sentence"},
+  {en:"Let's discuss",hr:"Razgovarajmo",pron:"разговАраймо",cat:"Survival",lvl:"sentence"},
+  {en:"I'll send you an email",hr:"Poslat ću vam email",pron:"пОслат чу вам Имейл",cat:"Survival",lvl:"sentence"},
+  {en:"Please check",hr:"Molim vas provjerite",pron:"мОлим вас провьЕрите",cat:"Survival",lvl:"sentence"},
+  {en:"See you when we come to Pula",hr:"Vidimo se kad dođemo u Pulu",pron:"вИдимо сэ кад дОджемо у пУлу",cat:"Survival",lvl:"sentence",ctx:"Signing off — planning the spring trip"},
+  {en:"When we come to Pula in spring",hr:"Kad dođemo u Pulu kasnije u proljeće",pron:"кад дОджемо у пУлу кАснийе у прОльечэ",cat:"Survival",lvl:"sentence",ctx:"Referencing the planned Pula visit"},
+  {en:"Kind regards",hr:"Lijep pozdrav",pron:"лИеп пОздрав",cat:"Survival",lvl:"phrase"},
+  {en:"Good / OK",hr:"Dobro",pron:"дОбро",cat:"Survival",lvl:"word"},
+  {en:"Excellent",hr:"Odlično",pron:"одлИчно",cat:"Survival",lvl:"word"},
+  {en:"Yes",hr:"Da",pron:"да",cat:"Survival",lvl:"word"},
+  {en:"No",hr:"Ne",pron:"нэ",cat:"Survival",lvl:"word"},
+  {en:"Please (formal)",hr:"Molim Vas",pron:"мОлим вас",cat:"Survival",lvl:"phrase"},
+  {en:"Thank you (formal)",hr:"Hvala Vam",pron:"хвАла вам",cat:"Survival",lvl:"phrase"},
+
+  // ============================================================
+  // TIME & SEASONS
+  // Days, months, seasons — for discussing seasonality & scheduling
+  // ============================================================
+
+  // -- Days of the week --
+  {en:"Monday",hr:"ponedjeljak",pron:"понЕдельяк",cat:"Time",lvl:"word"},
+  {en:"Tuesday",hr:"utorak",pron:"Уторак",cat:"Time",lvl:"word"},
+  {en:"Wednesday",hr:"srijeda",pron:"срИеда",cat:"Time",lvl:"word"},
+  {en:"Thursday",hr:"četvrtak",pron:"чЕтвртак",cat:"Time",lvl:"word"},
+  {en:"Friday",hr:"petak",pron:"пЕтак",cat:"Time",lvl:"word"},
+  {en:"Saturday",hr:"subota",pron:"сУбота",cat:"Time",lvl:"word"},
+  {en:"Sunday",hr:"nedjelja",pron:"нЕделья",cat:"Time",lvl:"word"},
+
+  // -- Months --
+  {en:"January",hr:"siječanj",pron:"сИечань",cat:"Time",lvl:"word"},
+  {en:"February",hr:"veljača",pron:"вЕляча",cat:"Time",lvl:"word"},
+  {en:"March",hr:"ožujak",pron:"Ожуяк",cat:"Time",lvl:"word"},
+  {en:"April",hr:"travanj",pron:"трАвань",cat:"Time",lvl:"word"},
+  {en:"May",hr:"svibanj",pron:"свИбань",cat:"Time",lvl:"word"},
+  {en:"June",hr:"lipanj",pron:"лИпань",cat:"Time",lvl:"word"},
+  {en:"July",hr:"srpanj",pron:"сРпань",cat:"Time",lvl:"word"},
+  {en:"August",hr:"kolovoz",pron:"кОловоз",cat:"Time",lvl:"word"},
+  {en:"September",hr:"rujan",pron:"рУян",cat:"Time",lvl:"word"},
+  {en:"October",hr:"listopad",pron:"лИстопад",cat:"Time",lvl:"word"},
+  {en:"November",hr:"studeni",pron:"стУдени",cat:"Time",lvl:"word"},
+  {en:"December",hr:"prosinac",pron:"прОсинац",cat:"Time",lvl:"word"},
+
+  // -- Seasons --
+  {en:"spring",hr:"proljeće",pron:"прОльечэ",cat:"Time",lvl:"word"},
+  {en:"summer",hr:"ljeto",pron:"льЕто",cat:"Time",lvl:"word"},
+  {en:"autumn",hr:"jesen",pron:"йЕсен",cat:"Time",lvl:"word"},
+  {en:"winter",hr:"zima",pron:"зИма",cat:"Time",lvl:"word"},
+
+  // -- Time phrases --
+  {en:"today",hr:"danas",pron:"дАнас",cat:"Time",lvl:"word"},
+  {en:"tomorrow",hr:"sutra",pron:"сУтра",cat:"Time",lvl:"word"},
+  {en:"this week",hr:"ovaj tjedan",pron:"Овай тьЕдан",cat:"Time",lvl:"phrase"},
+  {en:"last week",hr:"prošli tjedan",pron:"прОшли тьЕдан",cat:"Time",lvl:"phrase"},
+  {en:"this month",hr:"ovaj mjesec",pron:"Овай мьЕсец",cat:"Time",lvl:"phrase"},
+  {en:"last month",hr:"prošli mjesec",pron:"прОшли мьЕсец",cat:"Time",lvl:"phrase"},
+  {en:"last year",hr:"prošle godine",pron:"прОшлэ гОдинэ",cat:"Time",lvl:"phrase"},
+  {en:"summer season",hr:"ljetna sezona",pron:"льЕтна сЕзона",cat:"Time",lvl:"phrase"},
+  {en:"before summer",hr:"prije ljeta",pron:"прИйе льЕта",cat:"Time",lvl:"phrase"},
+
+  // -- Seasonality sentences --
+  {en:"Which months are the busiest?",hr:"Koji mjeseci su najprometniji?",pron:"кОйи мьЕсеци су найпромЕтнийи?",cat:"Time",lvl:"sentence",ctx:"Understanding peak vs off-peak revenue"},
+  {en:"How does summer compare to winter?",hr:"Kako se ljeto uspoređuje sa zimom?",pron:"кАко сэ льЕто успорЕджуйе са зИмом?",cat:"Time",lvl:"sentence",ctx:"Seasonal revenue patterns"},
+  {en:"We need new prices before summer",hr:"Trebamo nove cijene prije ljeta",pron:"трЕбамо нОвэ цИенэ прИйе льЕта",cat:"Time",lvl:"sentence",ctx:"Timing urgency for price increase"},
+
+  // ============================================================
+  // MENU ITEMS
+  // What you serve at Bounty — for discussing sales, pricing
+  // ============================================================
+
+  // -- Hot drinks --
+  {en:"espresso",hr:"espresso",pron:"еспрЕсо",cat:"Menu",lvl:"word"},
+  {en:"cappuccino",hr:"cappuccino",pron:"капучИно",cat:"Menu",lvl:"word"},
+  {en:"white coffee (latte)",hr:"bijela kava",pron:"бИела кАва",cat:"Menu",lvl:"word"},
+  {en:"Nescafe",hr:"Nescafe",pron:"нЕскафе",cat:"Menu",lvl:"word"},
+  {en:"hot chocolate",hr:"topla čokolada",pron:"тОпла чоколАда",cat:"Menu",lvl:"word"},
+  {en:"tea",hr:"čaj",pron:"чАй",cat:"Menu",lvl:"word"},
+
+  // -- Beer --
+  {en:"draft beer",hr:"točeno pivo",pron:"тОчено пИво",cat:"Menu",lvl:"word"},
+  {en:"bottled beer",hr:"pivo u boci",pron:"пИво у бОци",cat:"Menu",lvl:"word"},
+
+  // -- Wine & spirits --
+  {en:"wine",hr:"vino",pron:"вИно",cat:"Menu",lvl:"word"},
+  {en:"red wine",hr:"crno vino",pron:"цРно вИно",cat:"Menu",lvl:"word"},
+  {en:"white wine",hr:"bijelo vino",pron:"бИело вИно",cat:"Menu",lvl:"word"},
+  {en:"spirits",hr:"žestoka pića",pron:"жЕстока пИча",cat:"Menu",lvl:"word"},
+  {en:"domestic brandy",hr:"domaća rakija",pron:"домАча рАкия",cat:"Menu",lvl:"word"},
+
+  // -- Cocktails --
+  {en:"cocktail",hr:"koktel",pron:"кОктел",cat:"Menu",lvl:"word"},
+  {en:"mojito",hr:"mojito",pron:"мОхито",cat:"Menu",lvl:"word"},
+  {en:"shooter",hr:"shooter",pron:"шУтер",cat:"Menu",lvl:"word"},
+
+  // -- Snacks --
+  {en:"brioche",hr:"brioch",pron:"бриОш",cat:"Menu",lvl:"word"},
+  {en:"chips / crisps",hr:"čips",pron:"чипс",cat:"Menu",lvl:"word"},
+  {en:"popcorn",hr:"kokice",pron:"кОкицэ",cat:"Menu",lvl:"word"},
+
+  // -- Menu phrases --
+  {en:"with milk",hr:"s mlijekom",pron:"с млИеком",cat:"Menu",lvl:"phrase"},
+  {en:"without sugar",hr:"bez šećera",pron:"без шЕчера",cat:"Menu",lvl:"phrase"},
+  {en:"on tap",hr:"na točionici",pron:"на тОчионици",cat:"Menu",lvl:"phrase"},
+  {en:"a glass of wine",hr:"čaša vina",pron:"чАша вИна",cat:"Menu",lvl:"phrase"},
+  {en:"a cup of coffee",hr:"šalica kave",pron:"шАлица кАвэ",cat:"Menu",lvl:"phrase"},
+  {en:"still water",hr:"negazirana voda",pron:"негазИрана вОда",cat:"Menu",lvl:"phrase"},
+  {en:"sparkling water",hr:"gazirana voda",pron:"газИрана вОда",cat:"Menu",lvl:"phrase"},
+  {en:"fresh juice",hr:"svježi sok",pron:"свьЕжи сок",cat:"Menu",lvl:"phrase"},
+
+  // -- Menu sentences --
+  {en:"What do we currently have on the menu?",hr:"Što trenutno imamo na meniju?",pron:"што трЕнутно Имамо на мЕнию?",cat:"Menu",lvl:"sentence"},
+  {en:"We currently only have brioches, chips and popcorn",hr:"Trenutno imamo samo brioševe, čips i kokice",pron:"трЕнутно Имамо сАмо бриОшевэ, чипс и кОкицэ",cat:"Menu",lvl:"sentence",ctx:"Current snack situation at Bounty"},
+  {en:"How many cocktails do we sell per week?",hr:"Koliko koktela prodajemo tjedno?",pron:"колИко кОктела продАйемо тьЕдно?",cat:"Menu",lvl:"sentence"},
+  {en:"Coffee and hot drinks: +0.20 EUR",hr:"Kava i topli napitci: +0.20 EUR",pron:"кАва и тОпли нАпитци: плус двАдесет цЕнти",cat:"Menu",lvl:"sentence",ctx:"Agreed price increase amount"},
+  {en:"Which beer sells the most?",hr:"Koje pivo se najviše prodaje?",pron:"кОйе пИво сэ найвИше продАйе?",cat:"Menu",lvl:"sentence"},
+  {en:"Do customers ask for food?",hr:"Pitaju li gosti za hranu?",pron:"пИтаю ли гОсти за хрАну?",cat:"Menu",lvl:"sentence",ctx:"Checking demand before adding food"},
+  {en:"How much is a cappuccino?",hr:"Koliko košta cappuccino?",pron:"колИко кОшта капучИно?",cat:"Menu",lvl:"sentence"},
+  {en:"Can we add something new to the menu?",hr:"Možemo li dodati nešto novo na meni?",pron:"мОжемо ли додАти нЕшто нОво на мЕни?",cat:"Menu",lvl:"sentence"},
+  {en:"We should remove items that don't sell",hr:"Trebamo maknuti ono što se ne prodaje",pron:"трЕбамо мАкнути Оно што сэ нэ продАйе",cat:"Menu",lvl:"sentence"},
+  {en:"What is the most popular cocktail?",hr:"Koji koktel je najpopularniji?",pron:"кОйи кОктел йе найпопулАрнийи?",cat:"Menu",lvl:"sentence"},
+  {en:"One espresso and one cappuccino please",hr:"Jedan espresso i jedan cappuccino molim",pron:"йЕдан еспрЕсо и йЕдан капучИно мОлим",cat:"Menu",lvl:"sentence"},
+  {en:"Do we have enough stock of beer?",hr:"Imamo li dovoljno zaliha piva?",pron:"Имамо ли довОльно зАлиха пИва?",cat:"Menu",lvl:"sentence"},
+
+  // ============================================================
+  // FAMILY — Talking about Lidia (1yr) and family life
+  // For casual chats with Neven, staff, locals in Pula
+  // ============================================================
+
+  // -- Key words --
+  {en:"daughter",hr:"kći",pron:"кчи",cat:"Family",lvl:"word"},
+  {en:"baby",hr:"beba",pron:"бЕба",cat:"Family",lvl:"word"},
+  {en:"child",hr:"dijete",pron:"дИете",cat:"Family",lvl:"word"},
+  {en:"children",hr:"djeca",pron:"дьЕца",cat:"Family",lvl:"word"},
+  {en:"family",hr:"obitelj",pron:"обИтель",cat:"Family",lvl:"word"},
+  {en:"husband",hr:"muž",pron:"муж",cat:"Family",lvl:"word"},
+  {en:"mother",hr:"majka",pron:"мАйка",cat:"Family",lvl:"word"},
+  {en:"father",hr:"otac",pron:"Отац",cat:"Family",lvl:"word"},
+  {en:"parents",hr:"roditelji",pron:"родИтельи",cat:"Family",lvl:"word"},
+  {en:"name",hr:"ime",pron:"Имэ",cat:"Family",lvl:"word"},
+  {en:"year (of age)",hr:"godina",pron:"гОдина",cat:"Family",lvl:"word"},
+  {en:"to walk",hr:"hodati",pron:"хОдати",cat:"Family",lvl:"word"},
+  {en:"to sleep",hr:"spavati",pron:"спАвати",cat:"Family",lvl:"word"},
+  {en:"to eat",hr:"jesti",pron:"йЕсти",cat:"Family",lvl:"word"},
+  {en:"to play",hr:"igrati se",pron:"Играти сэ",cat:"Family",lvl:"word"},
+  {en:"cute",hr:"slatka",pron:"слАтка",cat:"Family",lvl:"word"},
+  {en:"little / small",hr:"mala",pron:"мАла",cat:"Family",lvl:"word"},
+  {en:"big (girl)",hr:"velika",pron:"вЕлика",cat:"Family",lvl:"word"},
+  {en:"happy",hr:"sretna",pron:"срЕтна",cat:"Family",lvl:"word"},
+  {en:"tired",hr:"umorna",pron:"умОрна",cat:"Family",lvl:"word"},
+  {en:"hungry",hr:"gladna",pron:"глАдна",cat:"Family",lvl:"word"},
+  {en:"playground",hr:"igralište",pron:"игрАлиште",cat:"Family",lvl:"word"},
+  {en:"sea / beach",hr:"more",pron:"мОрэ",cat:"Family",lvl:"word"},
+  {en:"park",hr:"park",pron:"парк",cat:"Family",lvl:"word"},
+
+  // -- Phrases --
+  {en:"my daughter",hr:"moja kći",pron:"мОя кчи",cat:"Family",lvl:"phrase"},
+  {en:"my little one",hr:"moja mala",pron:"мОя мАла",cat:"Family",lvl:"phrase"},
+  {en:"one year old",hr:"jedna godina",pron:"йЕдна гОдина",cat:"Family",lvl:"phrase"},
+  {en:"she started walking",hr:"počela je hodati",pron:"почЕла йе хОдати",cat:"Family",lvl:"phrase"},
+  {en:"she's sleeping",hr:"spava",pron:"спАва",cat:"Family",lvl:"phrase"},
+  {en:"she's eating",hr:"jede",pron:"йЕдэ",cat:"Family",lvl:"phrase"},
+  {en:"she's playing",hr:"igra se",pron:"Игра сэ",cat:"Family",lvl:"phrase"},
+  {en:"so cute",hr:"tako slatka",pron:"тАко слАтка",cat:"Family",lvl:"phrase"},
+  {en:"she looks like you",hr:"sliči na tebe",pron:"слИчи на тЕбэ",cat:"Family",lvl:"phrase"},
+  {en:"do you have children?",hr:"imate li djece?",pron:"Имате ли дьЕцэ?",cat:"Family",lvl:"phrase"},
+  {en:"first words",hr:"prve riječi",pron:"првэ рИечи",cat:"Family",lvl:"phrase"},
+  {en:"first steps",hr:"prvi koraci",pron:"први корАци",cat:"Family",lvl:"phrase"},
+
+  // -- Full sentences --
+  {en:"Her name is Lidia",hr:"Zove se Lidia",pron:"зОвэ сэ лИдия",cat:"Family",lvl:"sentence",ctx:"Introducing Lidia"},
+  {en:"She is one year old",hr:"Ima jednu godinu",pron:"Има йЕдну гОдину",cat:"Family",lvl:"sentence"},
+  {en:"She just started walking",hr:"Upravo je počela hodati",pron:"Управо йе почЕла хОдати",cat:"Family",lvl:"sentence"},
+  {en:"She is saying her first words",hr:"Govori svoje prve riječi",pron:"говОри свОйе првэ рИечи",cat:"Family",lvl:"sentence"},
+  {en:"She loves the sea",hr:"Obožava more",pron:"обожАва мОрэ",cat:"Family",lvl:"sentence"},
+  {en:"We brought her to Pula with us",hr:"Doveli smo je sa sobom u Pulu",pron:"довЕли смо йе са сОбом у пУлу",cat:"Family",lvl:"sentence",ctx:"When visiting with Lidia"},
+  {en:"She is growing so fast",hr:"Tako brzo raste",pron:"тАко бРзо рАстэ",cat:"Family",lvl:"sentence"},
+  {en:"She doesn't sleep well at night",hr:"Ne spava dobro noću",pron:"нэ спАва дОбро нОчу",cat:"Family",lvl:"sentence",ctx:"Classic parent talk"},
+  {en:"She eats everything",hr:"Jede sve",pron:"йЕдэ свэ",cat:"Family",lvl:"sentence"},
+  {en:"She is very curious",hr:"Jako je znatiželjna",pron:"йАко йе знатижЕльна",cat:"Family",lvl:"sentence"},
+  {en:"Can you recommend a good pediatrician?",hr:"Možete li preporučiti dobrog pedijatra?",pron:"мОжете ли препоручИти дОброг педиЯтра?",cat:"Family",lvl:"sentence",ctx:"Useful for Pula visits"},
+  {en:"Is there a playground nearby?",hr:"Ima li igralište u blizini?",pron:"Има ли игрАлиште у близИни?",cat:"Family",lvl:"sentence"},
+  {en:"She is a bit tired today",hr:"Malo je umorna danas",pron:"мАло йе умОрна дАнас",cat:"Family",lvl:"sentence"},
+  {en:"This is my daughter Lidia",hr:"Ovo je moja kći Lidia",pron:"Ово йе мОя кчи лИдия",cat:"Family",lvl:"sentence",ctx:"When introducing Lidia to someone"},
+  {en:"She looks just like her mother",hr:"Potpuno sliči na majku",pron:"потпУно слИчи на мАйку",cat:"Family",lvl:"sentence"},
+  {en:"Do you have children?",hr:"Imate li Vi djece?",pron:"Имате ли ви дьЕцэ?",cat:"Family",lvl:"sentence",ctx:"Asking Neven, staff, etc."},
+
+  // ============================================================
+  // GREETINGS — Casual conversation openers & closers
+  // For informal chats with Neven, staff, locals
+  // ============================================================
+  {en:"Hi (informal)",hr:"Bok",pron:"бок",cat:"Greetings",lvl:"word"},
+  {en:"How are you? (informal)",hr:"Kako si?",pron:"кАко си?",cat:"Greetings",lvl:"phrase"},
+  {en:"What's new?",hr:"Što ima novog?",pron:"што Има нОвог?",cat:"Greetings",lvl:"phrase"},
+  {en:"Long time no talk",hr:"Dugo se nismo čuli",pron:"дУго сэ нИсмо чУли",cat:"Greetings",lvl:"phrase"},
+  {en:"Everything ok?",hr:"Sve u redu?",pron:"свэ у рЕду?",cat:"Greetings",lvl:"phrase"},
+  {en:"How's it going?",hr:"Kako je?",pron:"кАко йе?",cat:"Greetings",lvl:"phrase"},
+  {en:"Here I am (when arriving)",hr:"Evo me",pron:"Ево мэ",cat:"Greetings",lvl:"phrase"},
+  {en:"Fine, nothing special",hr:"Ma dobro, ništa posebno",pron:"ма дОбро, нИшта посЕбно",cat:"Greetings",lvl:"phrase",ctx:"Casual response to 'how are you'"},
+  {en:"Alright, we'll be in touch",hr:"Ajde, čujemo se",pron:"Айдэ, чУемо сэ",cat:"Greetings",lvl:"phrase",ctx:"Casual conversation closer"},
+  {en:"Shall we go for coffee?",hr:"Idemo na kavu?",pron:"Идемо на кАву?",cat:"Greetings",lvl:"phrase",ctx:"Classic Croatian social invitation"},
+  {en:"What's up?",hr:"Što ima?",pron:"што Има?",cat:"Greetings",lvl:"phrase"},
+  {en:"Pleased to meet you",hr:"Drago mi je",pron:"дрАго ми йе",cat:"Greetings",lvl:"phrase"},
+];
+
+const CATEGORIES = [...new Set(WORDS.map(w => w.cat))];
+const CAT_ICONS = {
+  "Prices": "&#128181;",
+  "Bar Ops": "&#127866;",
+  "Renovation": "&#128296;",
+  "Financials": "&#128200;",
+  "Tax & Pension": "&#127970;",
+  "Legal": "&#9878;",
+  "Survival": "&#128172;",
+  "Time": "&#128197;",
+  "Menu": "&#9749;",
+  "Family": "&#128118;",
+  "Greetings": "&#128075;"
+};
+const LEVEL_LABELS = { word: "Word", phrase: "Phrase", sentence: "Full sentence" };
+
+// ============================================================
+// STATE
+// ============================================================
+let state = {
+  mode: 'quiz',
+  fcCategory: 'All',
+  fcLevel: 'All',
+  fcDirection: 'en-hr',
+  fcIndex: 0,
+  fcFlipped: false,
+  fcSeen: new Set(),
+  qzCategory: 'All',
+  qzLevel: 'All',
+  qzDirection: 'en-hr',
+  qzCorrect: 0,
+  qzWrong: 0,
+  qzTotal: 0,
+  qzAnswered: false,
+  qzQueue: [],
+  qzMissed: [],
+  mtLevel: 'All',
+  theme: localStorage.getItem('hr-theme') || 'dark'
+};
+
+// ============================================================
+// HELPERS
+// ============================================================
+function getFiltered(cat, level) {
+  let arr = cat === 'All' ? [...WORDS] : WORDS.filter(w => w.cat === cat);
+  if (level && level !== 'All') {
+    arr = arr.filter(w => w.lvl === level);
+  }
+  const order = { word: 0, phrase: 1, sentence: 2 };
+  arr.sort((a, b) => (order[a.lvl] || 0) - (order[b.lvl] || 0));
+  return arr;
+}
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function $(id) { return document.getElementById(id); }
+
+// Cache the Croatian voice once found
+let hrVoice = null;
+function findHrVoice() {
+  const voices = speechSynthesis.getVoices();
+  hrVoice = voices.find(v => v.lang === 'hr-HR')
+    || voices.find(v => v.lang.startsWith('hr'))
+    || voices.find(v => v.lang === 'sr-RS' || v.lang.startsWith('sr'))
+    || voices.find(v => v.lang === 'bs-BA' || v.lang.startsWith('bs'))
+    || null;
+  const el = $('voiceIndicator');
+  if (el) {
+    if (hrVoice) { el.textContent = '\u{1F50A} ' + hrVoice.name + ' (' + hrVoice.lang + ')'; el.style.color = 'var(--success)'; }
+    else { el.textContent = '\u26A0 No HR voice'; el.style.color = 'var(--error)'; }
+  }
+}
+// Voices load async on most browsers
+if (window.speechSynthesis) {
+  findHrVoice();
+  speechSynthesis.addEventListener('voiceschanged', findHrVoice);
+}
+
+function speak(text) {
+  if (!window.speechSynthesis) return null;
+  speechSynthesis.cancel();
+  if (!hrVoice) findHrVoice();
+  const u = new SpeechSynthesisUtterance(text);
+  if (hrVoice) {
+    u.voice = hrVoice;
+    u.lang = hrVoice.lang;
+  } else {
+    u.lang = 'hr-HR';
+  }
+  u.rate = 0.85;
+  speechSynthesis.speak(u);
+  return u;
+}
+
+// ============================================================
+// MASTERY / PROGRESS TRACKING
+// ============================================================
+function getMastery() {
+  try { return JSON.parse(localStorage.getItem('hr-mastery') || '{}'); } catch(e) { return {}; }
+}
+
+function saveMastery(hrText, correct) {
+  const m = getMastery();
+  if (!m[hrText]) m[hrText] = { streak: 0 };
+  if (correct) { m[hrText].streak = (m[hrText].streak || 0) + 1; }
+  else { m[hrText].streak = 0; }
+  localStorage.setItem('hr-mastery', JSON.stringify(m));
+}
+
+function getCatProgress(cat, level) {
+  const words = getFiltered(cat, level);
+  if (!words.length) return { known: 0, total: 0, pct: 0 };
+  const m = getMastery();
+  const known = words.filter(w => m[w.hr] && m[w.hr].streak >= 3).length;
+  return { known, total: words.length, pct: Math.round((known / words.length) * 100) };
+}
+
+// ============================================================
+// GLOBAL MASTERY BAR
+// ============================================================
+function updateMasteryBar() {
+  const prog = getCatProgress('All');
+  const w = getCatProgress('All', 'word');
+  const p = getCatProgress('All', 'phrase');
+  const s = getCatProgress('All', 'sentence');
+  $('mastery-text').innerHTML = '<strong>' + prog.known + '</strong>/' + prog.total + ' learned';
+  $('mastery-detail').textContent = w.known + '/' + w.total + ' words \u00B7 ' + p.known + '/' + p.total + ' phrases \u00B7 ' + s.known + '/' + s.total + ' sentences';
+  $('mastery-pct').textContent = prog.pct + '%';
+  $('mastery-fill').style.width = prog.pct + '%';
+}
+
+// ============================================================
+// LEVEL FILTER RENDERING
+// ============================================================
+function renderLevels(containerId, currentLevel, onSelect) {
+  const container = $(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  ['All', 'word', 'phrase', 'sentence'].forEach(lvl => {
+    const btn = document.createElement('button');
+    btn.className = 'dir-btn' + (currentLevel === lvl ? ' active' : '');
+    btn.textContent = lvl === 'All' ? 'All' : (LEVEL_LABELS[lvl] || lvl);
+    btn.addEventListener('click', () => onSelect(lvl));
+    container.appendChild(btn);
+  });
+}
+
+// ============================================================
+// THEME
+// ============================================================
+function applyTheme() {
+  document.body.classList.toggle('light', state.theme === 'light');
+  $('themeBtn').innerHTML = state.theme === 'dark' ? '&#9788;' : '&#9790;';
+  document.querySelector('meta[name="theme-color"]').content = state.theme === 'dark' ? '#0c1b33' : '#faf6f0';
+}
+$('themeBtn').addEventListener('click', () => {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  localStorage.setItem('hr-theme', state.theme);
+  applyTheme();
+});
+applyTheme();
+
+// ============================================================
+// TABS
+// ============================================================
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    state.mode = tab.dataset.tab;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    $(state.mode + '-screen').classList.add('active');
+  });
+});
+
+// ============================================================
+// CATEGORY BUTTONS
+// ============================================================
+function fmtProgress(prog) {
+  return prog.known + '/' + prog.total;
+}
+
+function renderCategories(containerId, currentCat, onSelect, level) {
+  const container = $(containerId);
+  container.innerHTML = '';
+  const allProg = getCatProgress('All', level);
+  const allBtn = document.createElement('button');
+  allBtn.className = 'cat-btn' + (currentCat === 'All' ? ' active' : '');
+  allBtn.innerHTML = 'All <span class="cat-pct' + (allProg.pct >= 80 ? ' green' : '') + '">' + fmtProgress(allProg) + '</span>';
+  allBtn.addEventListener('click', () => onSelect('All'));
+  container.appendChild(allBtn);
+  CATEGORIES.forEach(cat => {
+    const prog = getCatProgress(cat, level);
+    const btn = document.createElement('button');
+    btn.className = 'cat-btn' + (currentCat === cat ? ' active' : '');
+    btn.dataset.cat = cat;
+    btn.innerHTML = (CAT_ICONS[cat] || '') + ' ' + cat + ' <span class="cat-pct' + (prog.pct >= 80 ? ' green' : '') + '">' + fmtProgress(prog) + '</span>';
+    btn.addEventListener('click', () => onSelect(cat));
+    container.appendChild(btn);
+  });
+}
+
+// ============================================================
+// FLASHCARDS
+// ============================================================
+function fcCards() { return getFiltered(state.fcCategory, state.fcLevel); }
+
+function renderFlashcard() {
+  const cards = fcCards();
+  if (!cards.length) {
+    $('fc-cat').textContent = '';
+    $('fc-cat2').textContent = '';
+    $('fc-level').textContent = '';
+    $('fc-english').textContent = 'No cards for this filter';
+    $('fc-croatian').textContent = '';
+    $('fc-pron').textContent = '';
+    $('fc-context').textContent = '';
+    $('fc-progress').style.width = '0%';
+    $('fc-progress-text').textContent = '0 / 0';
+    return;
+  }
+  const idx = state.fcIndex % cards.length;
+  const card = cards[idx];
+  const isEnHr = state.fcDirection === 'en-hr';
+
+  $('fc-cat').textContent = card.cat;
+  $('fc-cat2').textContent = card.cat;
+  $('fc-level').textContent = LEVEL_LABELS[card.lvl] || card.lvl;
+
+  if (isEnHr) {
+    $('fc-english').textContent = card.en;
+    $('fc-croatian').textContent = card.hr;
+    $('fc-pron').textContent = card.pron;
+  } else {
+    $('fc-english').textContent = card.hr;
+    $('fc-croatian').textContent = card.en;
+    $('fc-pron').textContent = card.pron;
+  }
+  $('fc-context').textContent = card.ctx || '';
+  state.fcSeen.add(card.en);
+  localStorage.setItem('hr-seen', JSON.stringify([...state.fcSeen]));
+
+  const pct = Math.round(((idx + 1) / cards.length) * 100);
+  $('fc-progress').style.width = pct + '%';
+  $('fc-progress-text').textContent = `${idx + 1} / ${cards.length}`;
+
+  state.fcFlipped = false;
+  $('flashcard').classList.remove('flipped');
+}
+
+function initFlashcards() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('hr-seen') || '[]');
+    state.fcSeen = new Set(saved);
+  } catch(e) {}
+
+  renderCategories('fc-categories', state.fcCategory, cat => {
+    state.fcCategory = cat;
+    state.fcIndex = 0;
+    initFlashcards();
+  }, state.fcLevel);
+  renderLevels('fc-levels', state.fcLevel, lvl => {
+    state.fcLevel = lvl;
+    state.fcIndex = 0;
+    initFlashcards();
+  });
+  // Direction toggle
+  $('fc-direction').querySelectorAll('.dir-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.dir === state.fcDirection);
+    btn.onclick = () => {
+      state.fcDirection = btn.dataset.dir;
+      $('fc-direction').querySelectorAll('.dir-btn').forEach(b => b.classList.toggle('active', b.dataset.dir === state.fcDirection));
+      renderFlashcard();
+    };
+  });
+  renderFlashcard();
+}
+
+$('flashcard').addEventListener('click', () => {
+  state.fcFlipped = !state.fcFlipped;
+  $('flashcard').classList.toggle('flipped', state.fcFlipped);
+});
+
+$('fc-speak').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const cards = fcCards();
+  const card = cards[state.fcIndex % cards.length];
+  if (card) speak(card.hr);
+});
+
+$('fc-croatian').addEventListener('click', (e) => {
+  e.stopPropagation();
+  const cards = fcCards();
+  const card = cards[state.fcIndex % cards.length];
+  if (card) speak(card.hr);
+});
+
+$('nextBtn').addEventListener('click', () => {
+  const cards = fcCards();
+  state.fcIndex = (state.fcIndex + 1) % cards.length;
+  renderFlashcard();
+});
+
+$('prevBtn').addEventListener('click', () => {
+  const cards = fcCards();
+  state.fcIndex = (state.fcIndex - 1 + cards.length) % cards.length;
+  renderFlashcard();
+});
+
+// Swipe support
+let touchStartX = 0;
+$('flashcard').addEventListener('touchstart', e => {
+  touchStartX = e.changedTouches[0].screenX;
+}, { passive: true });
+$('flashcard').addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].screenX - touchStartX;
+  if (Math.abs(dx) > 60) {
+    if (dx < 0) $('nextBtn').click();
+    else $('prevBtn').click();
+  }
+});
+
+// Keyboard
+document.addEventListener('keydown', e => {
+  if (state.mode === 'flashcards') {
+    if (e.key === 'ArrowRight') $('nextBtn').click();
+    if (e.key === 'ArrowLeft') $('prevBtn').click();
+    if (e.key === ' ') { e.preventDefault(); $('flashcard').click(); }
+  }
+});
+
+// ============================================================
+// QUIZ
+// ============================================================
+function buildQueue() {
+  const filtered = getFiltered(state.qzCategory, state.qzLevel);
+  const m = getMastery();
+  // Spaced repetition: sort into tiers by mastery streak
+  const weakest = [], learning = [], known = [];
+  filtered.forEach(w => {
+    const streak = (m[w.hr] && m[w.hr].streak) || 0;
+    if (streak === 0) weakest.push(w);
+    else if (streak < 3) learning.push(w);
+    else known.push(w);
+  });
+  state.qzQueue = [...shuffle(weakest), ...shuffle(learning), ...shuffle(known)];
+}
+
+function renderQuiz() {
+  const container = $('quiz-content');
+  if (!state.qzQueue.length) {
+    buildQueue();
+  }
+  if (!state.qzQueue.length) {
+    container.innerHTML = '<p style="text-align:center;color:var(--text2);padding:40px;">No cards for this filter.</p>';
+    return;
+  }
+
+  const card = state.qzQueue[0];
+  const isListen = state.qzDirection === 'listen';
+  const isEnHr = state.qzDirection === 'en-hr';
+  // In listen mode, show options in English (like hr-en)
+  const showHrOptions = isEnHr;
+  const promptText = isListen ? '' : (isEnHr ? card.en : card.hr);
+  const correctAnswer = showHrOptions ? card.hr : card.en;
+  const promptLabel = isListen ? 'Listen & choose' : (isEnHr ? 'English' : 'Croatian');
+
+  let pool = getFiltered(state.qzCategory, state.qzLevel).filter(w => w !== card);
+  let sameLvl = pool.filter(w => w.lvl === card.lvl);
+  let wrongSource = sameLvl.length >= 3 ? sameLvl : pool;
+  const wrongPool = shuffle(wrongSource).slice(0, 3);
+
+  const options = shuffle([
+    { text: correctAnswer, correct: true },
+    ...wrongPool.map(w => ({ text: showHrOptions ? w.hr : w.en, correct: false }))
+  ]);
+
+  const promptHTML = isListen
+    ? '<div class="listen-speaker" id="qz-replay">&#128264;</div>'
+    : `<div class="quiz-prompt">${promptText}</div>`;
+
+  container.innerHTML = `
+    <div class="quiz-question">
+      <div class="quiz-prompt-label">${promptLabel} &middot; ${LEVEL_LABELS[card.lvl] || ''}</div>
+      ${promptHTML}
+    </div>
+    <div class="quiz-options">
+      ${options.map((o, i) => `<button class="quiz-option" data-idx="${i}">${o.text}</button>`).join('')}
+    </div>
+  `;
+
+  // Auto-play in listen mode
+  if (isListen) {
+    setTimeout(() => speak(card.hr), 300);
+    const replay = $('qz-replay');
+    if (replay) replay.addEventListener('click', () => speak(card.hr));
+  }
+
+  state.qzAnswered = false;
+
+  container.querySelectorAll('.quiz-option').forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+      if (state.qzAnswered) return;
+      state.qzAnswered = true;
+      state.qzTotal++;
+
+      container.querySelectorAll('.quiz-option').forEach(b => b.classList.add('disabled'));
+
+      const isCorrect = options[i].correct;
+      if (isCorrect) {
+        btn.classList.add('correct');
+        state.qzCorrect++;
+        state.qzMissed = state.qzMissed.filter(w => w !== card);
+      } else {
+        btn.classList.add('wrong');
+        container.querySelectorAll('.quiz-option').forEach((b, j) => {
+          if (options[j].correct) b.classList.add('correct');
+        });
+        state.qzWrong++;
+        if (!state.qzMissed.includes(card)) state.qzMissed.push(card);
+      }
+
+      // Save mastery
+      saveMastery(card.hr, isCorrect);
+      updateMasteryBar();
+
+      $('score-correct').textContent = state.qzCorrect;
+      $('score-wrong').textContent = state.qzWrong;
+      $('score-total').textContent = state.qzTotal;
+
+      const total = getFiltered(state.qzCategory, state.qzLevel).length;
+      $('qz-progress').style.width = Math.round((state.qzTotal / total) * 100) + '%';
+
+      // Refresh category progress
+      renderCategories('qz-categories', state.qzCategory, cat => {
+        state.qzCategory = cat;
+        resetQuiz();
+      }, state.qzLevel);
+
+      const utterance = speak(card.hr);
+
+      let timerDone = false;
+      let speechDone = !utterance;
+      function tryAdvance() {
+        if (timerDone && speechDone) {
+          state.qzQueue.shift();
+          if (!state.qzQueue.length) buildQueue();
+          renderQuiz();
+        }
+      }
+      setTimeout(() => { timerDone = true; tryAdvance(); }, 1200);
+      if (utterance) {
+        utterance.onend = () => { speechDone = true; tryAdvance(); };
+        utterance.onerror = () => { speechDone = true; tryAdvance(); };
+      }
+    });
+  });
+}
+
+function resetQuiz() {
+  state.qzCorrect = 0;
+  state.qzWrong = 0;
+  state.qzTotal = 0;
+  state.qzMissed = [];
+  $('score-correct').textContent = '0';
+  $('score-wrong').textContent = '0';
+  $('score-total').textContent = '0';
+  $('qz-progress').style.width = '0%';
+  buildQueue();
+  initQuiz();
+}
+
+function initQuiz() {
+  renderCategories('qz-categories', state.qzCategory, cat => {
+    state.qzCategory = cat;
+    resetQuiz();
+  }, state.qzLevel);
+  renderLevels('qz-levels', state.qzLevel, lvl => {
+    state.qzLevel = lvl;
+    resetQuiz();
+  });
+  // Direction toggle
+  $('qz-direction').querySelectorAll('.dir-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.dir === state.qzDirection);
+    btn.onclick = () => {
+      state.qzDirection = btn.dataset.dir;
+      $('qz-direction').querySelectorAll('.dir-btn').forEach(b => b.classList.toggle('active', b.dataset.dir === state.qzDirection));
+      buildQueue();
+      renderQuiz();
+    };
+  });
+  buildQueue();
+  renderQuiz();
+}
+
+// ============================================================
+// MATCH GAME
+// ============================================================
+let matchState = {
+  category: 'All',
+  pool: [],
+  round: [],
+  selected: null,
+  matched: 0,
+  mistakes: 0,
+  busy: false
+};
+
+function buildMatchRound() {
+  if (!matchState.pool.length) {
+    matchState.pool = shuffle(getFiltered(matchState.category, state.mtLevel).slice());
+  }
+  const pairs = matchState.pool.splice(0, 6);
+  if (!pairs.length) {
+    $('match-grid').innerHTML = '';
+    $('match-done').style.display = 'block';
+    $('match-done').querySelector('p').textContent = 'Category complete! Pick another or play again.';
+    $('match-next').textContent = 'Restart';
+    return;
+  }
+  matchState.round = pairs;
+  matchState.selected = null;
+  $('match-done').style.display = 'none';
+
+  const tiles = [];
+  pairs.forEach((w, i) => {
+    tiles.push({ id: i, lang: 'en', text: w.en, pairId: i });
+    tiles.push({ id: i, lang: 'hr', text: w.hr, pairId: i });
+  });
+  shuffle(tiles);
+
+  const grid = $('match-grid');
+  grid.innerHTML = '';
+  tiles.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'match-tile';
+    btn.innerHTML = `<div><span class="tile-lang">${t.lang === 'en' ? 'EN' : 'HR'}</span>${t.text}</div>`;
+    btn.dataset.pairId = t.pairId;
+    btn.dataset.lang = t.lang;
+    btn.addEventListener('click', () => handleMatchTap(btn, t));
+    grid.appendChild(btn);
+  });
+}
+
+function handleMatchTap(btn, tile) {
+  if (matchState.busy) return;
+  if (btn.classList.contains('matched') || btn.classList.contains('correct')) return;
+
+  if (matchState.selected && matchState.selected.btn === btn) {
+    btn.classList.remove('selected');
+    matchState.selected = null;
+    return;
+  }
+
+  if (!matchState.selected) {
+    btn.classList.add('selected');
+    matchState.selected = { btn, tile };
+    return;
+  }
+
+  const first = matchState.selected;
+
+  if (first.tile.lang === tile.lang) {
+    first.btn.classList.remove('selected');
+    btn.classList.add('selected');
+    matchState.selected = { btn, tile };
+    return;
+  }
+
+  matchState.busy = true;
+
+  if (first.tile.pairId === tile.pairId) {
+    first.btn.classList.remove('selected');
+    first.btn.classList.add('correct');
+    btn.classList.add('correct');
+    matchState.matched++;
+    $('mt-matched').textContent = matchState.matched;
+
+    const word = matchState.round[tile.pairId];
+    if (word) {
+      speak(word.hr);
+      saveMastery(word.hr, true);
+      // Refresh category progress
+      renderCategories('mt-categories', matchState.category, cat => {
+        matchState.category = cat;
+        matchState.pool = [];
+        matchState.matched = 0;
+        matchState.mistakes = 0;
+        $('mt-matched').textContent = '0';
+        $('mt-mistakes').textContent = '0';
+        initMatch();
+      }, state.mtLevel);
+      updateMasteryBar();
+    }
+
+    setTimeout(() => {
+      first.btn.classList.add('matched');
+      btn.classList.add('matched');
+      matchState.selected = null;
+      matchState.busy = false;
+
+      const remaining = $('match-grid').querySelectorAll('.match-tile:not(.matched)');
+      if (!remaining.length) {
+        setTimeout(() => {
+          if (matchState.pool.length) {
+            $('match-done').style.display = 'block';
+            $('match-done').querySelector('p').textContent = 'Round cleared!';
+            $('match-next').textContent = 'Next Round \u2192';
+          } else {
+            $('match-done').style.display = 'block';
+            $('match-done').querySelector('p').textContent = 'All pairs matched!';
+            $('match-next').textContent = 'Play Again';
+          }
+        }, 200);
+      }
+    }, 1500);
+  } else {
+    first.btn.classList.remove('selected');
+    first.btn.classList.add('wrong');
+    btn.classList.add('wrong');
+    matchState.mistakes++;
+    $('mt-mistakes').textContent = matchState.mistakes;
+
+    setTimeout(() => {
+      first.btn.classList.remove('wrong');
+      btn.classList.remove('wrong');
+      matchState.selected = null;
+      matchState.busy = false;
+    }, 600);
+  }
+}
+
+function initMatch() {
+  renderCategories('mt-categories', matchState.category, cat => {
+    matchState.category = cat;
+    matchState.pool = [];
+    matchState.matched = 0;
+    matchState.mistakes = 0;
+    $('mt-matched').textContent = '0';
+    $('mt-mistakes').textContent = '0';
+    initMatch();
+  }, state.mtLevel);
+  renderLevels('mt-levels', state.mtLevel, lvl => {
+    state.mtLevel = lvl;
+    matchState.pool = [];
+    matchState.matched = 0;
+    matchState.mistakes = 0;
+    $('mt-matched').textContent = '0';
+    $('mt-mistakes').textContent = '0';
+    initMatch();
+  });
+  matchState.pool = shuffle(getFiltered(matchState.category, state.mtLevel).slice());
+  buildMatchRound();
+}
+
+$('match-next').addEventListener('click', () => {
+  if (!matchState.pool.length) {
+    matchState.pool = shuffle(getFiltered(matchState.category, state.mtLevel).slice());
+  }
+  buildMatchRound();
+});
+
+// ============================================================
+// NUMBER DRILLS
+// ============================================================
+const NUMBERS = [
+  {n:1,hr:"jedan",pron:"йЕдан"},{n:2,hr:"dva",pron:"два"},{n:3,hr:"tri",pron:"три"},
+  {n:4,hr:"četiri",pron:"чЕтири"},{n:5,hr:"pet",pron:"пет"},{n:6,hr:"šest",pron:"шест"},
+  {n:7,hr:"sedam",pron:"сЕдам"},{n:8,hr:"osam",pron:"Осам"},{n:9,hr:"devet",pron:"дЕвет"},
+  {n:10,hr:"deset",pron:"дЕсет"},{n:11,hr:"jedanaest",pron:"йеданАест"},
+  {n:12,hr:"dvanaest",pron:"дванАест"},{n:13,hr:"trinaest",pron:"тринАест"},
+  {n:14,hr:"četrnaest",pron:"четрнАест"},{n:15,hr:"petnaest",pron:"петнАест"},
+  {n:16,hr:"šesnaest",pron:"шеснАест"},{n:17,hr:"sedamnaest",pron:"седамнАест"},
+  {n:18,hr:"osamnaest",pron:"осамнАест"},{n:19,hr:"devetnaest",pron:"деветнАест"},
+  {n:20,hr:"dvadeset",pron:"двАдесет"},{n:25,hr:"dvadeset pet",pron:"двАдесет пет"},
+  {n:30,hr:"trideset",pron:"трИдесет"},{n:40,hr:"četrdeset",pron:"чЕтрдесет"},
+  {n:50,hr:"pedeset",pron:"пЕдесет"},{n:60,hr:"šezdeset",pron:"шЕздесет"},
+  {n:70,hr:"sedamdeset",pron:"сЕдамдесет"},{n:80,hr:"osamdeset",pron:"Осамдесет"},
+  {n:90,hr:"devedeset",pron:"дЕведесет"},{n:100,hr:"sto",pron:"сто"},
+  {n:150,hr:"sto pedeset",pron:"сто пЕдесет"},{n:200,hr:"dvjesto",pron:"двьЕсто"},
+  {n:250,hr:"dvjesto pedeset",pron:"двьЕсто пЕдесет"},{n:300,hr:"tristo",pron:"трИсто"},
+  {n:400,hr:"četiristo",pron:"четИристо"},{n:500,hr:"petsto",pron:"пЕтсто"},
+  {n:600,hr:"šesto",pron:"шЕсто"},{n:700,hr:"sedamsto",pron:"сЕдамсто"},
+  {n:800,hr:"osamsto",pron:"Осамсто"},{n:900,hr:"devetsto",pron:"дЕветсто"},
+  {n:1000,hr:"tisuću",pron:"тИсучу"}
+];
+
+const NUM_TIERS = [
+  { label: '1-20', filter: n => n.n >= 1 && n.n <= 20 },
+  { label: '20-100', filter: n => n.n >= 20 && n.n <= 100 },
+  { label: '100-1000', filter: n => n.n >= 100 },
+  { label: 'All', filter: () => true }
+];
+
+let numState = {
+  tier: 'All',
+  correct: 0,
+  wrong: 0,
+  total: 0,
+  answered: false
+};
+
+function getNumPool() {
+  const t = NUM_TIERS.find(t => t.label === numState.tier) || NUM_TIERS[3];
+  return NUMBERS.filter(t.filter);
+}
+
+function renderNumTiers() {
+  const container = $('num-tiers');
+  container.innerHTML = '';
+  NUM_TIERS.forEach(t => {
+    const btn = document.createElement('button');
+    btn.className = 'dir-btn' + (numState.tier === t.label ? ' active' : '');
+    btn.textContent = t.label;
+    btn.addEventListener('click', () => {
+      numState.tier = t.label;
+      numState.correct = 0; numState.wrong = 0; numState.total = 0;
+      $('num-correct').textContent = '0';
+      $('num-wrong').textContent = '0';
+      $('num-total').textContent = '0';
+      renderNumTiers();
+      renderNumDrill();
+    });
+    container.appendChild(btn);
+  });
+}
+
+function renderNumDrill() {
+  const pool = getNumPool();
+  if (!pool.length) return;
+  const target = pool[Math.floor(Math.random() * pool.length)];
+  const container = $('num-content');
+
+  let wrongPool = pool.filter(n => n !== target);
+  shuffle(wrongPool);
+  const wrongs = wrongPool.slice(0, 3);
+
+  const options = shuffle([
+    { text: target.hr, pron: target.pron, correct: true },
+    ...wrongs.map(w => ({ text: w.hr, pron: w.pron, correct: false }))
+  ]);
+
+  container.innerHTML = `
+    <div class="num-display">${target.n}</div>
+    <div class="num-subtitle">What is this number in Croatian?</div>
+    <div class="quiz-options">
+      ${options.map((o, i) => `<button class="quiz-option" data-idx="${i}">${o.text}<br><small style="color:var(--text2)">${o.pron}</small></button>`).join('')}
+    </div>
+  `;
+
+  numState.answered = false;
+
+  container.querySelectorAll('.quiz-option').forEach((btn, i) => {
+    btn.addEventListener('click', () => {
+      if (numState.answered) return;
+      numState.answered = true;
+      numState.total++;
+
+      container.querySelectorAll('.quiz-option').forEach(b => b.classList.add('disabled'));
+
+      if (options[i].correct) {
+        btn.classList.add('correct');
+        numState.correct++;
+      } else {
+        btn.classList.add('wrong');
+        container.querySelectorAll('.quiz-option').forEach((b, j) => {
+          if (options[j].correct) b.classList.add('correct');
+        });
+        numState.wrong++;
+      }
+
+      $('num-correct').textContent = numState.correct;
+      $('num-wrong').textContent = numState.wrong;
+      $('num-total').textContent = numState.total;
+
+      speak(target.hr);
+
+      setTimeout(() => renderNumDrill(), 1400);
+    });
+  });
+}
+
+function initNumbers() {
+  renderNumTiers();
+  renderNumDrill();
+}
+
+// ============================================================
+// SENTENCE BUILDER
+// ============================================================
+let blState = {
+  category: 'All',
+  queue: [],
+  assembled: [],
+  correct: 0,
+  wrong: 0,
+  total: 0,
+  answered: false
+};
+
+function getSentences(cat) {
+  return getFiltered(cat, 'sentence');
+}
+
+function buildBlQueue() {
+  blState.queue = shuffle(getSentences(blState.category).slice());
+}
+
+function renderBuilder() {
+  const container = $('builder-content');
+  if (!blState.queue.length) buildBlQueue();
+  if (!blState.queue.length) {
+    container.innerHTML = '<p style="text-align:center;color:var(--text2);padding:40px;">No sentences for this category.</p>';
+    return;
+  }
+
+  const card = blState.queue[0];
+  const words = card.hr.split(/\s+/);
+  const shuffled = shuffle(words.slice());
+  blState.assembled = [];
+  blState.answered = false;
+
+  container.innerHTML = `
+    <div class="builder-prompt">
+      <div class="builder-prompt-label">Build the Croatian sentence</div>
+      <div class="builder-prompt-text">${card.en}</div>
+    </div>
+    <div class="builder-assembled" id="bl-assembled">
+      <span class="builder-placeholder">Tap words below to build the sentence...</span>
+    </div>
+    <div class="builder-tiles" id="bl-tiles">
+      ${shuffled.map((w, i) => `<button class="builder-tile" data-word="${w}" data-idx="${i}">${w}</button>`).join('')}
+    </div>
+    <div class="builder-result" id="bl-result"></div>
+    <div class="builder-correct-answer" id="bl-answer"></div>
+    <div class="builder-nav">
+      <button class="nav-btn" id="bl-undo">&#8592; Undo</button>
+      <button class="nav-btn primary" id="bl-skip">Skip &#8594;</button>
+    </div>
+  `;
+
+  const tiles = container.querySelectorAll('.builder-tile');
+  const assembledDiv = $('bl-assembled');
+
+  function updateAssembled() {
+    if (!blState.assembled.length) {
+      assembledDiv.innerHTML = '<span class="builder-placeholder">Tap words below to build the sentence...</span>';
+    } else {
+      assembledDiv.innerHTML = blState.assembled.map((w, i) =>
+        `<span class="builder-assembled-word" data-aidx="${i}">${w}</span>`
+      ).join('');
+      assembledDiv.querySelectorAll('.builder-assembled-word').forEach(el => {
+        el.addEventListener('click', () => {
+          if (blState.answered) return;
+          const idx = parseInt(el.dataset.aidx);
+          blState.assembled.splice(idx);
+          tiles.forEach(t => {
+            const used = blState.assembled.filter(a => a === t.dataset.word).length;
+            const total = [...tiles].filter(tt => tt.dataset.word === t.dataset.word).length;
+            // Re-enable tiles that aren't used
+            t.classList.remove('used');
+          });
+          // Mark used tiles
+          const usedCount = {};
+          blState.assembled.forEach(a => { usedCount[a] = (usedCount[a]||0) + 1; });
+          tiles.forEach(t => {
+            const w = t.dataset.word;
+            if (!usedCount[w] || usedCount[w] <= 0) { t.classList.remove('used'); }
+            else { t.classList.add('used'); usedCount[w]--; }
+          });
+          updateAssembled();
+        });
+      });
+    }
+
+    // Check if complete
+    if (blState.assembled.length === words.length && !blState.answered) {
+      blState.answered = true;
+      blState.total++;
+      const builtSentence = blState.assembled.join(' ');
+      const correctSentence = card.hr;
+      const isCorrect = builtSentence.toLowerCase() === correctSentence.toLowerCase();
+
+      if (isCorrect) {
+        $('bl-result').textContent = 'Correct!';
+        $('bl-result').className = 'builder-result correct';
+        blState.correct++;
+        saveMastery(card.hr, true);
+      } else {
+        $('bl-result').textContent = 'Not quite...';
+        $('bl-result').className = 'builder-result wrong';
+        $('bl-answer').textContent = 'Correct: ' + correctSentence;
+        blState.wrong++;
+        saveMastery(card.hr, false);
+      }
+      updateMasteryBar();
+
+      $('bl-correct').textContent = blState.correct;
+      $('bl-wrong').textContent = blState.wrong;
+      $('bl-total').textContent = blState.total;
+
+      speak(card.hr);
+
+      setTimeout(() => {
+        blState.queue.shift();
+        if (!blState.queue.length) buildBlQueue();
+        renderBuilder();
+      }, 2000);
+    }
+  }
+
+  tiles.forEach(t => {
+    t.addEventListener('click', () => {
+      if (blState.answered || t.classList.contains('used')) return;
+      blState.assembled.push(t.dataset.word);
+      t.classList.add('used');
+      updateAssembled();
+    });
+  });
+
+  $('bl-undo').addEventListener('click', () => {
+    if (blState.answered || !blState.assembled.length) return;
+    const removed = blState.assembled.pop();
+    // Un-use last matching tile
+    const tileArr = [...tiles].reverse();
+    for (const t of tileArr) {
+      if (t.dataset.word === removed && t.classList.contains('used')) {
+        t.classList.remove('used');
+        break;
+      }
+    }
+    updateAssembled();
+  });
+
+  $('bl-skip').addEventListener('click', () => {
+    blState.queue.shift();
+    if (!blState.queue.length) buildBlQueue();
+    renderBuilder();
+  });
+}
+
+function initBuilder() {
+  renderCategories('bl-categories', blState.category, cat => {
+    blState.category = cat;
+    blState.correct = 0; blState.wrong = 0; blState.total = 0;
+    blState.queue = [];
+    $('bl-correct').textContent = '0';
+    $('bl-wrong').textContent = '0';
+    $('bl-total').textContent = '0';
+    initBuilder();
+  });
+  buildBlQueue();
+  renderBuilder();
+}
+
+// ============================================================
+// INIT
+// ============================================================
+initFlashcards();
+initQuiz();
+initMatch();
+initNumbers();
+initBuilder();
+updateMasteryBar();
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
