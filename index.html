@@ -3006,8 +3006,10 @@ function syncFromCloud(callback) {
   firebaseDb.ref('users/' + pin + '/mastery').once('value')
     .then(snap => {
       const cloudData = snap.val();
+      const local = getMastery();
+      const localKeys = Object.keys(local);
+
       if (cloudData) {
-        const local = getMastery();
         // Merge: keep higher streak
         const merged = { ...local };
         Object.keys(cloudData).forEach(key => {
@@ -3019,6 +3021,12 @@ function syncFromCloud(callback) {
         });
         localStorage.setItem('hr-mastery', JSON.stringify(merged));
         updateMasteryBar();
+        // Push merged data back to cloud
+        firebaseDb.ref('users/' + pin + '/mastery').set(merged);
+      } else if (localKeys.length > 0) {
+        // Cloud is empty but we have local data — push it up
+        firebaseDb.ref('users/' + pin + '/mastery').set(local);
+        firebaseDb.ref('users/' + pin + '/lastSync').set(Date.now());
       }
       updateSyncIndicator('synced');
       if (callback) callback();
