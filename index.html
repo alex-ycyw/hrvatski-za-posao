@@ -1556,7 +1556,16 @@ const WORDS = [
   // GREETINGS — Casual conversation openers & closers
   // For informal chats with Neven, staff, locals
   // ============================================================
+  // -- Key words --
   {en:"Hi (informal)",hr:"Bok",pron:"бок",cat:"Greetings",lvl:"word"},
+  {en:"Good day (formal)",hr:"Dobar dan",pron:"дОбар дан",cat:"Greetings",lvl:"word"},
+  {en:"Good morning",hr:"Dobro jutro",pron:"дОбро йУтро",cat:"Greetings",lvl:"word"},
+  {en:"Good evening",hr:"Dobra večer",pron:"дОбра вЕчер",cat:"Greetings",lvl:"word"},
+  {en:"Goodbye",hr:"Doviđenja",pron:"довИдженья",cat:"Greetings",lvl:"word"},
+  {en:"Welcome",hr:"Dobrodošli",pron:"добродОшли",cat:"Greetings",lvl:"word"},
+  {en:"Cheers!",hr:"Živjeli!",pron:"жИвьели!",cat:"Greetings",lvl:"word"},
+
+  // -- Phrases --
   {en:"How are you? (informal)",hr:"Kako si?",pron:"кАко си?",cat:"Greetings",lvl:"phrase"},
   {en:"What's new?",hr:"Što ima novog?",pron:"што Има нОвог?",cat:"Greetings",lvl:"phrase"},
   {en:"Long time no talk",hr:"Dugo se nismo čuli",pron:"дУго сэ нИсмо чУли",cat:"Greetings",lvl:"phrase"},
@@ -1568,6 +1577,14 @@ const WORDS = [
   {en:"Shall we go for coffee?",hr:"Idemo na kavu?",pron:"Идемо на кАву?",cat:"Greetings",lvl:"phrase",ctx:"Classic Croatian social invitation"},
   {en:"What's up?",hr:"Što ima?",pron:"што Има?",cat:"Greetings",lvl:"phrase"},
   {en:"Pleased to meet you",hr:"Drago mi je",pron:"дрАго ми йе",cat:"Greetings",lvl:"phrase"},
+
+  // -- Full sentences --
+  {en:"Hi Neven, how are you?",hr:"Bok Neven, kako si?",pron:"бок нЕвен, кАко си?",cat:"Greetings",lvl:"sentence",ctx:"Opening a casual call with Neven"},
+  {en:"Good day, pleased to meet you",hr:"Dobar dan, drago mi je",pron:"дОбар дан, дрАго ми йе",cat:"Greetings",lvl:"sentence",ctx:"Formal introduction at a meeting"},
+  {en:"It's been a long time since we talked",hr:"Dugo se nismo čuli, kako ste?",pron:"дУго сэ нИсмо чУли, кАко стэ?",cat:"Greetings",lvl:"sentence"},
+  {en:"Shall we go for a coffee and catch up?",hr:"Idemo na kavu pa da se uhvatimo?",pron:"Идемо на кАву па да сэ ухвАтимо?",cat:"Greetings",lvl:"sentence",ctx:"Suggesting a casual meetup in Pula"},
+  {en:"Thank you for everything, see you soon",hr:"Hvala vam na svemu, vidimo se uskoro",pron:"хвАла вам на свЕму, вИдимо сэ Ускоро",cat:"Greetings",lvl:"sentence",ctx:"Wrapping up a meeting"},
+  {en:"Give my regards to everyone",hr:"Pozdravite sve od mene",pron:"поздрАвитэ свэ од мЕнэ",cat:"Greetings",lvl:"sentence",ctx:"Signing off to Neven — greet the staff"},
 ];
 
 const CATEGORIES = [...new Set(WORDS.map(w => w.cat))];
@@ -2923,11 +2940,11 @@ function showPinPrompt(onDone) {
   const overlay = document.createElement('div');
   overlay.className = 'pin-overlay';
   overlay.innerHTML = `<div class="pin-modal">
-    <h3>Cloud Sync</h3>
-    <p>Enter a 4-digit PIN to sync progress across devices. Use the same PIN on all devices.</p>
+    <h3>Sync Your Progress</h3>
+    <p>Choose any 4-digit PIN to save your learning progress to the cloud. This lets you continue on any device — just use the same PIN everywhere.</p>
     <input type="tel" maxlength="4" pattern="[0-9]{4}" id="pin-input" placeholder="1234" inputmode="numeric">
     <button id="pin-save">Save PIN</button>
-    <button class="pin-skip" id="pin-skip">Skip (offline only)</button>
+    <button class="pin-skip" id="pin-skip">Skip for now</button>
   </div>`;
   document.body.appendChild(overlay);
 
