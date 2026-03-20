@@ -1785,29 +1785,33 @@ if (window.speechSynthesis) {
   speechSynthesis.addEventListener('voiceschanged', findHrVoice);
 }
 
-const TTS_OVERRIDES = {
-  'cappuccino': 'kapučino',
-  'espresso': 'espreso',
-  'Nescafe': 'neskafe',
-  'nescafe': 'neskafe',
-  'rashodi': 'ras hodi',
-};
+// Pre-generated audio manifest (ElevenLabs)
+let audioManifest = null;
+let currentAudio = null;
+fetch('audio/manifest.json').then(r => r.json()).then(m => { audioManifest = m; }).catch(() => {});
 
 function speak(text) {
+  // Stop any currently playing audio
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+  if (window.speechSynthesis) speechSynthesis.cancel();
+
+  // Try pre-generated audio first
+  if (audioManifest && audioManifest[text]) {
+    const audio = new Audio('audio/' + audioManifest[text].file);
+    currentAudio = audio;
+    audio.play().catch(() => {});
+    // Return object with onend support matching SpeechSynthesisUtterance interface
+    const proxy = { onend: null };
+    audio.addEventListener('ended', () => { currentAudio = null; if (proxy.onend) proxy.onend(); });
+    return proxy;
+  }
+
+  // Fallback to browser TTS
   if (!window.speechSynthesis) return null;
-  speechSynthesis.cancel();
   if (!hrVoice) findHrVoice();
-  let ttsText = text;
-  for (const [word, pron] of Object.entries(TTS_OVERRIDES)) {
-    ttsText = ttsText.replace(new RegExp(word, 'gi'), pron);
-  }
-  const u = new SpeechSynthesisUtterance(ttsText);
-  if (hrVoice) {
-    u.voice = hrVoice;
-    u.lang = hrVoice.lang;
-  } else {
-    u.lang = 'hr-HR';
-  }
+  const u = new SpeechSynthesisUtterance(text);
+  if (hrVoice) { u.voice = hrVoice; u.lang = hrVoice.lang; }
+  else { u.lang = 'hr-HR'; }
   u.rate = 0.85;
   speechSynthesis.speak(u);
   return u;

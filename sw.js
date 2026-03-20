@@ -1,8 +1,9 @@
-const CACHE_NAME = 'hrvatski-v11';
+const CACHE_NAME = 'hrvatski-v12';
 const ASSETS = [
   './',
   './index.html',
-  './manifest.json'
+  './manifest.json',
+  './audio/manifest.json'
 ];
 
 self.addEventListener('install', event => {
