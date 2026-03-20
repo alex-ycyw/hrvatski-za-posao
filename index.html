@@ -156,6 +156,11 @@ header h1 { font-size: 20px; font-weight: 700; }
 .activity-btn .ab-label { font-size: 16px; font-weight: 700; }
 .activity-btn .ab-desc { font-size: 12px; color: var(--text2); }
 .activity-btn.disabled { opacity: 0.35; pointer-events: none; }
+.activity-btn .ab-progress { font-size: 11px; color: var(--text2); margin-top: 2px; }
+.activity-btn.mode-done { border-color: #4a7c59; }
+.activity-btn.mode-done .ab-progress { color: #4a7c59; font-weight: 600; }
+.light .activity-btn.mode-done { border-color: #5a8f6a; }
+.light .activity-btn.mode-done .ab-progress { color: #5a8f6a; }
 
 /* Screen back header */
 .screen-back {
@@ -1700,17 +1705,17 @@ const WORDS = [
 
 const CATEGORIES = [...new Set(WORDS.map(w => w.cat))];
 const CAT_ICONS = {
-  "Prices": "&#128181;",
-  "Bar Ops": "&#127866;",
-  "Renovation": "&#128296;",
-  "Financials": "&#128200;",
-  "Tax & Pension": "&#127970;",
-  "Legal": "&#9878;",
-  "Survival": "&#128172;",
-  "Time": "&#128197;",
-  "Menu": "&#9749;",
-  "Family": "&#128118;",
-  "Greetings": "&#128075;"
+  "Prices": "\u{1F4B5}",
+  "Bar Ops": "\u{1F37A}",
+  "Renovation": "\u{1F528}",
+  "Financials": "\u{1F4C8}",
+  "Tax & Pension": "\u{1F3E2}",
+  "Legal": "\u2696",
+  "Survival": "\u{1F4AC}",
+  "Time": "\u{1F4C5}",
+  "Menu": "\u2615",
+  "Family": "\u{1F476}",
+  "Greetings": "\u{1F44B}"
 };
 const LEVEL_LABELS = { word: "Word", phrase: "Phrase", sentence: "Full sentence" };
 
@@ -1803,11 +1808,15 @@ function getMastery() {
   try { return JSON.parse(localStorage.getItem('hr-mastery') || '{}'); } catch(e) { return {}; }
 }
 
-function saveMastery(hrText, correct) {
+function saveMastery(hrText, correct, mode) {
   const m = getMastery();
   if (!m[hrText]) m[hrText] = { streak: 0 };
   if (correct) { m[hrText].streak = (m[hrText].streak || 0) + 1; }
   else { m[hrText].streak = 0; }
+  if (mode && correct) {
+    if (!m[hrText].modes) m[hrText].modes = {};
+    m[hrText].modes[mode] = (m[hrText].modes[mode] || 0) + 1;
+  }
   localStorage.setItem('hr-mastery', JSON.stringify(m));
   updateStreak();
   if (typeof syncToCloud === 'function') syncToCloud();
@@ -1841,6 +1850,13 @@ function getCatProgress(cat, level) {
   return { known, total: words.length, pct: Math.round((known / words.length) * 100) };
 }
 
+function getModeDone(cat, level, mode) {
+  const words = getFiltered(cat, level);
+  if (!words.length) return 0;
+  const m = getMastery();
+  return words.filter(w => m[w.hr] && m[w.hr].modes && m[w.hr].modes[mode] >= 2).length;
+}
+
 // ============================================================
 // GLOBAL MASTERY BAR
 // ============================================================
@@ -1853,6 +1869,14 @@ function updateMasteryBar() {
   $('mastery-detail').textContent = w.known + '/' + w.total + ' words \u00B7 ' + p.known + '/' + p.total + ' phrases \u00B7 ' + s.known + '/' + s.total + ' sentences';
   $('mastery-pct').textContent = prog.pct + '%';
   $('mastery-fill').style.width = prog.pct + '%';
+  // Live-update the detail subtitle on whichever mode screen is active
+  try {
+    const detail = getActivityDetail();
+    ['qz','mt','bl','tp','fc'].forEach(prefix => {
+      const el = $(prefix + '-screen-detail');
+      if (el) el.textContent = detail;
+    });
+  } catch(e) {}
 }
 
 // ============================================================
@@ -2000,37 +2024,39 @@ function renderActivities() {
   // Activity buttons
   const actGrid = $('activity-grid');
   const sentenceCount = getFiltered(state.currentCat, 'sentence').length;
+  const phraseCount = getFiltered(state.currentCat, 'phrase').length;
+  const buildableCount = phraseCount + sentenceCount;
   const currentLevelItems = getFiltered(state.currentCat, state.currentLevel === 'All' ? undefined : state.currentLevel).length;
-  const hasSentences = state.currentLevel === 'sentence' ? sentenceCount > 0 :
-                       state.currentLevel === 'All' ? sentenceCount > 0 : false;
+  const hasBuildable = state.currentLevel === 'sentence' ? sentenceCount > 0 :
+                       state.currentLevel === 'phrase' ? phraseCount > 0 :
+                       state.currentLevel === 'All' ? buildableCount > 0 : false;
 
-  actGrid.innerHTML = `
-    <div class="activity-btn${currentLevelItems < 4 ? ' disabled' : ''}" data-mode="quiz">
-      <div class="ab-icon">&#127919;</div>
-      <div class="ab-label">Quiz</div>
-      <div class="ab-desc">Multiple choice</div>
-    </div>
-    <div class="activity-btn${currentLevelItems < 4 ? ' disabled' : ''}" data-mode="match">
-      <div class="ab-icon">&#129513;</div>
-      <div class="ab-label">Match</div>
-      <div class="ab-desc">Pair matching</div>
-    </div>
-    <div class="activity-btn${!currentLevelItems ? ' disabled' : ''}" data-mode="typing">
-      <div class="ab-icon">&#9000;</div>
-      <div class="ab-label">Type</div>
-      <div class="ab-desc">Type the answer</div>
-    </div>
-    <div class="activity-btn${!hasSentences ? ' disabled' : ''}" data-mode="builder">
-      <div class="ab-icon">&#128295;</div>
-      <div class="ab-label">Build</div>
-      <div class="ab-desc">Sentence builder</div>
-    </div>
-    <div class="activity-btn${!currentLevelItems ? ' disabled' : ''}" data-mode="flashcards">
-      <div class="ab-icon">&#127183;</div>
-      <div class="ab-label">Cards</div>
-      <div class="ab-desc">Flashcards</div>
-    </div>
-  `;
+  const lvl = state.currentLevel === 'All' ? undefined : state.currentLevel;
+  const modeMap = {
+    match: { icon: '\u{1F9E9}', label: 'Match', desc: 'Pair matching', need: 4 },
+    quiz: { icon: '\u{1F3AF}', label: 'Quiz', desc: 'Multiple choice', need: 4 },
+    typing: { icon: '\u2328', label: 'Type', desc: 'Type the answer', need: 1 },
+    builder: { icon: '\u{1F527}', label: 'Build', desc: 'Sentence builder', need: 0, buildable: true },
+    flashcards: { icon: '\u{1F0CF}', label: 'Cards', desc: 'Flashcards', need: 1, passive: true }
+  };
+  const modeOrder = ['match', 'quiz', 'typing', 'builder', 'flashcards'];
+
+  actGrid.innerHTML = modeOrder.map(mode => {
+    const m = modeMap[mode];
+    const disabled = m.buildable ? !hasBuildable : (m.need > 0 && currentLevelItems < m.need);
+    const modeLvl = m.buildable ? undefined : lvl;
+    const done = m.passive ? null : (m.buildable ? getBuildableDone(state.currentCat, mode) : getModeDone(state.currentCat, modeLvl, mode));
+    const total = m.buildable ? getBuildableTotal(state.currentCat) : currentLevelItems;
+    const allDone = done !== null && total > 0 && done >= total;
+    const progressText = done !== null && total > 0 ? `${done}/${total} done` : '';
+
+    return `<div class="activity-btn${disabled ? ' disabled' : ''}${allDone ? ' mode-done' : ''}" data-mode="${mode}">
+      <div class="ab-icon">${m.icon}</div>
+      <div class="ab-label">${m.label}</div>
+      <div class="ab-desc">${m.desc}</div>
+      ${progressText ? `<div class="ab-progress">${allDone ? '\u2713 ' : ''}${progressText}</div>` : ''}
+    </div>`;
+  }).join('\n    ');
 
   actGrid.querySelectorAll('.activity-btn:not(.disabled)').forEach(btn => {
     btn.addEventListener('click', () => startActivity(btn.dataset.mode));
@@ -2336,7 +2362,7 @@ function renderQuiz() {
       }
 
       // Save mastery
-      saveMastery(card.hr, isCorrect);
+      saveMastery(card.hr, isCorrect, 'quiz');
       updateMasteryBar();
 
       $('score-correct').textContent = state.qzCorrect;
@@ -2474,7 +2500,7 @@ function handleMatchTap(btn, tile) {
     const word = matchState.round[tile.pairId];
     if (word) {
       speak(word.hr);
-      saveMastery(word.hr, true);
+      saveMastery(word.hr, true, 'match');
       updateMasteryBar();
     }
 
@@ -2741,7 +2767,7 @@ function renderTyping() {
       tpState.wrong++;
     }
 
-    saveMastery(card.hr, isCorrect);
+    saveMastery(card.hr, isCorrect, 'typing');
     updateMasteryBar();
 
     $('tp-correct').textContent = tpState.correct;
@@ -2802,8 +2828,27 @@ let blState = {
   answered: false
 };
 
+function getBuildableItems() {
+  const lvl = state.currentLevel;
+  if (lvl === 'phrase') return getFiltered(state.currentCat, 'phrase');
+  if (lvl === 'sentence') return getFiltered(state.currentCat, 'sentence');
+  // All or word level — return phrases + sentences
+  return getFiltered(state.currentCat, 'phrase').concat(getFiltered(state.currentCat, 'sentence'));
+}
+
+function getBuildableDone(cat, mode) {
+  const items = getBuildableItems();
+  if (!items.length) return 0;
+  const m = getMastery();
+  return items.filter(w => m[w.hr] && m[w.hr].modes && m[w.hr].modes[mode] >= 2).length;
+}
+
+function getBuildableTotal(cat) {
+  return getBuildableItems().length;
+}
+
 function getSentences() {
-  return getFiltered(state.currentCat, 'sentence');
+  return getBuildableItems();
 }
 
 function buildBlQueue() {
@@ -2814,7 +2859,7 @@ function renderBuilder() {
   const container = $('builder-content');
   if (!blState.queue.length) buildBlQueue();
   if (!blState.queue.length) {
-    container.innerHTML = '<p style="text-align:center;color:var(--text2);padding:40px;">No sentences for this category.</p>';
+    container.innerHTML = '<p style="text-align:center;color:var(--text2);padding:40px;">No phrases or sentences for this category.</p>';
     return;
   }
 
@@ -2826,11 +2871,11 @@ function renderBuilder() {
 
   container.innerHTML = `
     <div class="builder-prompt">
-      <div class="builder-prompt-label">Build the Croatian sentence</div>
+      <div class="builder-prompt-label">Build the Croatian ${card.lvl === 'phrase' ? 'phrase' : 'sentence'}</div>
       <div class="builder-prompt-text">${card.en}</div>
     </div>
     <div class="builder-assembled" id="bl-assembled">
-      <span class="builder-placeholder">Tap words below to build the sentence...</span>
+      <span class="builder-placeholder">Tap words below to build the ${card.lvl === 'phrase' ? 'phrase' : 'sentence'}...</span>
     </div>
     <div class="builder-tiles" id="bl-tiles">
       ${shuffled.map((w, i) => `<button class="builder-tile" data-word="${w}" data-idx="${i}">${w}</button>`).join('')}
@@ -2889,13 +2934,13 @@ function renderBuilder() {
         $('bl-result').textContent = 'Correct!';
         $('bl-result').className = 'builder-result correct';
         blState.correct++;
-        saveMastery(card.hr, true);
+        saveMastery(card.hr, true, 'builder');
       } else {
         $('bl-result').textContent = 'Not quite...';
         $('bl-result').className = 'builder-result wrong';
         $('bl-answer').textContent = 'Correct: ' + correctSentence;
         blState.wrong++;
-        saveMastery(card.hr, false);
+        saveMastery(card.hr, false, 'builder');
       }
       updateMasteryBar();
 
@@ -3202,10 +3247,10 @@ function renderDlgConversation() {
 
         if (isCorrect) {
           btn.classList.add('correct');
-          saveMastery(currentLine.hr, true);
+          saveMastery(currentLine.hr, true, 'dialogue');
         } else {
           btn.classList.add('wrong');
-          saveMastery(currentLine.hr, false);
+          saveMastery(currentLine.hr, false, 'dialogue');
           choiceBtns.forEach(b => {
             if (b.dataset.correct === 'true') b.classList.add('correct');
           });
@@ -3367,13 +3412,26 @@ function syncFromCloud(callback) {
       const localKeys = Object.keys(local);
 
       if (cloudData) {
-        // Merge: keep higher streak
+        // Merge: keep higher streak + merge per-mode counts (keep higher)
         const merged = { ...local };
         Object.keys(cloudData).forEach(key => {
-          const cloudStreak = (cloudData[key] && cloudData[key].streak) || 0;
-          const localStreak = (local[key] && local[key].streak) || 0;
+          const cd = cloudData[key] || {};
+          const ld = local[key] || {};
+          const cloudStreak = cd.streak || 0;
+          const localStreak = ld.streak || 0;
           if (cloudStreak > localStreak) {
-            merged[key] = cloudData[key];
+            merged[key] = { ...cd };
+          }
+          if (!merged[key]) merged[key] = { streak: Math.max(cloudStreak, localStreak) };
+          // Merge modes: keep higher count per mode
+          const cm = cd.modes || {};
+          const lm = (merged[key].modes) || {};
+          const allModes = new Set([...Object.keys(cm), ...Object.keys(lm)]);
+          if (allModes.size) {
+            merged[key].modes = {};
+            allModes.forEach(m => {
+              merged[key].modes[m] = Math.max(cm[m] || 0, lm[m] || 0);
+            });
           }
         });
         localStorage.setItem('hr-mastery', JSON.stringify(merged));
